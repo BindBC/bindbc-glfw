@@ -412,7 +412,7 @@ static if(bindWindows) {
     enum bindGLFW_WGL = q{
         extern(C) @nogc nothrow alias pglfwGetWGLContext = HGLRC function(GLFWwindow* window);
         __gshared pglfwGetWGLContext glfwGetWGLContext;
-        void loadGLFW_NSGL()
+        void loadGLFW_NSGL() {
             assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_WGL");
             lib.bindSymbol(cast(void**)&glfwGetWGLContext,"glfwGetWGLContext");
         }
@@ -457,7 +457,7 @@ else static if(bindMac) {
         extern(C) @nogc nothrow alias pglfwGetNSGLContext = id function(GLFWwindow*);
         __gshared pglfwGetNSGLContext glfwGetNSGLContext;
 
-        void loadGLFW_NSGL()
+        void loadGLFW_NSGL() {
             assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_NSGL");
             lib.bindSymbol(cast(void**)&glfwGetNSGLContext, "glfwGetNSGLContext");
         }
@@ -513,7 +513,7 @@ else static if(bindPosix && !bindAndroid) {
                 lib.bindSymbol(cast(void**)&glfwGetGLXContext, "glfwGetGLXContext");
                 lib.bindSymbol(cast(void**)&glfwGetGLXWindow, "glfwGetGLXWindow");
             }
-        }
+        };
     }
     else {
         enum bindGLFW_GLX = q{
@@ -524,7 +524,7 @@ else static if(bindPosix && !bindAndroid) {
                 assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_GLX");
                 lib.bindSymbol(cast(void**)&glfwGetGLXContext, "glfwGetGLXContext");
             }
-        }
+        };
     }
 
     static if(glfwSupport >= GLFWSupport.glfw31) {
@@ -552,6 +552,7 @@ else static if(bindPosix && !bindAndroid) {
                 lib.bindSymbol(cast(void**)&glfwGetX11Monitor,"glfwGetX11Monitor");
             }
         };
+    }
     else {
         enum bindGLFW_X11 = q{
             extern(C) @nogc nothrow {
