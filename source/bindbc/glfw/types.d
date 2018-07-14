@@ -323,8 +323,8 @@ enum GLFW_DISCONNECTED = 0x00040002;
 static if(glfwSupport >= GLFWSupport.glfw31) enum GLFW_DONT_CARE = -1;
 
 extern(C) @nogc nothrow {
-    alias void function() GLFWglproc;
-    static if(glfwSupport >= GLFWSupport.glfw32) alias void function() GLFWvkproc;
+    alias GLFWglproc = void function();
+    static if(glfwSupport >= GLFWSupport.glfw32) alias GLFWvkproc = void function();
 }
 
 struct GLFWmonitor;
