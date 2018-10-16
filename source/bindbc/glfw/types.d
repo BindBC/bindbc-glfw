@@ -7,6 +7,8 @@
 module bindbc.glfw.types;
 
 enum GLFWSupport {
+    noLibrary,
+    badLibrary,
     glfw30,
     glfw31,
     glfw32,
