@@ -4,9 +4,9 @@ This project provides both static and dynamic bindings to the [GLFW library](htt
 ## Usage
 By default, `bindbc-glfw` is configured to compile as a dynamic binding that is not `-betterC` compatible. The dynamic binding has no link-time dependency on the GLFW library, so the GLFW shared library must be manually loaded at runtime. When configured as a static binding, there is a link-time dependency on the GLFW library -- either the static library or the appropriate file for linking with shared libraries on your platform (see below).
 
-When using DUB to manage your project, the static binding can be enabled via a DUB `subConfiguration` statement in your project's package file. BetterC compatibility is also enabled via subconfigurations.
+When using DUB to manage your project, the static binding can be enabled via a DUB `subConfiguration` statement in your project's package file. `-betterC` compatibility is also enabled via subconfigurations.
 
-To use GLFW, add `bindbc-glfw` as a dependency to your project's package config file. For example, the following is configured to GLFW as a dynamic binding that is not BetterC compatible:
+To use GLFW, add `bindbc-glfw` as a dependency to your project's package config file. For example, the following is configured to GLFW as a dynamic binding that is not `-betterC` compatible:
 
 __dub.json__
 ```
@@ -23,7 +23,7 @@ dependency "bindbc-glfw" version="~>0.1.0"
 ### The dynamic binding
 The dynamic binding requires no special configuration when using DUB to manage your project. There is no link-time dependency. At runtime, the GLFW shared library is required to be on the shared library search path of the user's system. On Windows, this is typically handled by distributing the GLFW DLL with your program. On other systems, it usually means installing the GLFW runtime library through a package manager.
 
-To load the shared library, you need to call the `loadGLFW` function. This returns a member of the `GLFWSupport` enum indicating that the library failed to load (it couldn't be found), one or more symbols failed to load, or a version number that matches a global enum value based on the compile-time configuration.
+To load the shared library, you need to call the `loadGLFW` function. This returns a member of the `GLFWSupport` enumeration indicating that the library failed to load (it couldn't be found), one or more symbols failed to load, or a version number that matches a global `enum` value based on the compile-time configuration. (See [the README for `bindbc.loader`](https://github.com/BindBC/bindbc-loader/blob/master/README.md) for the error handling API.)
 
 ```d
 import bindbc.glfw;
@@ -159,7 +159,7 @@ This has the benefit that it completely excludes from the build any source modul
 
 ## `betterC` support
 
-`betterC` support is enabled via the `dynamicBC` and `staticBC` subconfigurations, for dynamic and static bindings respectively. To enable the static binding with BetterC support:
+`betterC` support is enabled via the `dynamicBC` and `staticBC` subconfigurations, for dynamic and static bindings respectively. To enable the static binding with `-betterC` support:
 
 __dub.json__
 ```
