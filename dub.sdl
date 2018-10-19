@@ -1,5 +1,5 @@
 name "bindbc-glfw"
-description "Dynamic and static bindings to GLFW3."
+description "Dynamic and static bindings to GLFW3, compatible with -betterC, @nogc, and nothrow."
 homepage ""
 authors "Mike Parker"
 license "Boost"
