@@ -76,25 +76,7 @@ versions "GLFW_31"
 
 With this example configuration, `glfwSupport == GLFWSupport.glfw31`. If GLFW 3.1 or later is installed on the user's system, `loadGLFW` will return `GLFWSupport.glfw31`. If only GLFW 3.0 is installed, `loadGLFW` will return `GLFWSupport.badLibrary`, meaning only GLFW 3.0 was loaded. In this case, it's still possible to call GLFW 3.0 functions, but any calls to GLFW 3.1 functions will result in a null pointer access. For this reason, it's recommended to required the version of the library you configured at compile time.
 
-No matter which version was configured, the successfully loaded version can be obtained via a call to `loadedGLFWVersion`.
-
-```d
-import bindbc.glfw;
-int main() {
-    auto ret = load
-    if(ret != glfwSupport) {
-        // It's recommended to require the configured GLFW version, however it's possible
-        // to determine which version was actually loaded use that to decide whether to abort
-        // or continue.
-        if(ret == GLFWSupport.badLibrary) {
-            // e.g. Configure for 3.2, but support 3.1, so error out on 3.0
-            if(loadedVersion == GLFWSupport.glfw30) {
-                // Handle error.
-            }
-        }
-    }
-}
-```
+No matter which version was configured, the successfully loaded version can be obtained via a call to `loadedGLFWVersion`. The function `isGLFWLoaded` returns `true` if any version of GLFW was successfully loaded and `false` otherwise.
 
 Following are the supported versions of GLFW and the corresponding version IDs to pass to the compiler.
 

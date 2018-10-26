@@ -228,6 +228,7 @@ extern(C) @nogc nothrow {
  }
 
  GLFWSupport loadedGLFWVersion() { return loadedVersion; }
+ bool isGLFWLoaded() { return lib != invalidHandle; }
 
  GLFWSupport loadGLFW()
  {
