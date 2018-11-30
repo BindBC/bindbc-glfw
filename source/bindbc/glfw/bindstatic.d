@@ -142,7 +142,7 @@ enum bindGLFW_EGL = q{
     }
 };
 
-version(Widows) {
+version(Windows) {
     enum bindGLFW_WGL = q{
         extern(C) @nogc nothrow HGLRC glfwGetWGLContext(GLFWwindow*);
     };
