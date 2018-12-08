@@ -24,5 +24,4 @@ configuration "static" {
 configuration "staticBC" {
     dflags "-betterC"
     versions "BindGLFW_Static"
-    excludedSourceFiles "source/bindbc/sdl/dynload.d"
 }
