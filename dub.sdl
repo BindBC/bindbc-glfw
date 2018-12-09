@@ -19,10 +19,11 @@ configuration "dynamicBC" {
 
 configuration "static" {
     versions "BindGLFW_Static"
+    excludedSourceFiles "source/bindbc/glfw/binddynamic.d"
 }
 
 configuration "staticBC" {
     dflags "-betterC"
     versions "BindGLFW_Static"
-    excludedSourceFiles "source/bindbc/sdl/dynload.d"
+    excludedSourceFiles "source/bindbc/glfw/binddynamic.d"
 }
