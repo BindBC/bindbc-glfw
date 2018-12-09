@@ -1,5 +1,5 @@
 # bindbc-glfw
-This project provides both static and dynamic bindings to the [GLFW library](http://www.glfw.org/index.html). They are `@nogc` and `nothrow` compatible can be compiled with compatibility with `-betterC`. This package is intended as a replacement of [DerelictGLFW3](https://github.com/DerelictOrg/DerelictGLFW3), which is not compatible with `@nogc`,  `nothrow`, or `-betterC`.
+This project provides both static and dynamic bindings to the [GLFW library](http://www.glfw.org/index.html). They are `@nogc` and `nothrow` compatible can be compiled for compatibility with `-betterC`. This package is intended as a replacement of [DerelictGLFW3](https://github.com/DerelictOrg/DerelictGLFW3), which is not compatible with `@nogc`,  `nothrow`, or `-betterC`.
 
 ## Usage
 By default, `bindbc-glfw` is configured to compile as a dynamic binding that is not `-betterC` compatible. The dynamic binding has no link-time dependency on the GLFW library, so the GLFW shared library must be manually loaded at runtime. When configured as a static binding, there is a link-time dependency on the GLFW library -- either the static library or the appropriate file for linking with shared libraries on your platform (see below).
@@ -21,9 +21,13 @@ dependency "bindbc-glfw" version="~>0.1.0"
 ```
 
 ### The dynamic binding
-The dynamic binding requires no special configuration when using DUB to manage your project. There is no link-time dependency. At runtime, the GLFW shared library is required to be on the shared library search path of the user's system. On Windows, this is typically handled by distributing the GLFW DLL with your program. On other systems, it usually means installing the GLFW runtime library through a package manager.
+The dynamic binding requires no special configuration when using DUB to manage your project. There is no link-time dependency. At runtime, the GLFW shared library is required to be on the shared library search path of the user's system. On Windows, this is typically handled by distributing the GLFW DLL with your program. On other systems, it usually means the user must install the GLFW runtime library through a package manager.
 
-To load the shared library, you need to call the `loadGLFW` function. This returns a member of the `GLFWSupport` enumeration indicating that the library failed to load (it couldn't be found), one or more symbols failed to load, or a version number that matches a global `enum` value based on the compile-time configuration. (See [the README for `bindbc.loader`](https://github.com/BindBC/bindbc-loader/blob/master/README.md) for the error handling API.)
+To load the shared library, you need to call the `loadGLFW` function. This returns a member of the `GLFWSupport` enumeration (See [the README for `bindbc.loader`](https://github.com/BindBC/bindbc-loader/blob/master/README.md) for the error handling API):
+
+* `GLFWSupport.noLibrary` indicating that the library failed to load (it couldn't be found)
+* `GLFWSupport.badLibrary` indicating that one or more symbols in the library failed to load
+* a member of `GLFWSupport` indicating a version number that matches the version of GLFW that `bindbc-glfw` was configured at compile-time to load. By default, that is `GLFWSupport.glfw30`, but can be configured via a version identifier (see below). This value will match the global manifest constant, `glfwSupport`.
 
 ```d
 import bindbc.glfw;
@@ -36,8 +40,8 @@ GLFWSupport ret = loadGLFW();
 if(ret != glfwSupport) {
 
     // Handle error. For most use cases, its reasonable to use the the error handling API in
-    // bindbc-loader to retrieve error messages and then abort. If necessary, it's  possible
-    // to determine the root cause via the return value:
+    // bindbc-loader to retrieve error messages for logging and then abort. If necessary, it's 
+    // possible to determine the root cause via the return value:
 
     if(ret == GLFWSupport.noLibrary) {
         // GLFW shared library failed to load
@@ -56,9 +60,7 @@ to the executable, only on Windows.
 */
 // version(Windows) loadGLFW("libs/glfw3.dll")
 ```
-By default, the `bindbc-glfw` binding is configured to compile a binding to GLFW 3.0. This ensures the widest level of compatibility at runtime. This behavior can be overridden via the `-version` compiler switch or the `versions` DUB directive.
-
-It is recommended that you always select the minimum version you require _and no higher_. In this example, the GLFW dynamic binding is compiled to support GLFW 3.1.
+By default, the `bindbc-glfw` binding is configured to compile to load GLFW 3.0. This ensures the widest level of compatibility at runtime. This behavior can be overridden via the `-version` compiler switch or the `versions` DUB directive with the desired GLFW version number. It is recommended that you always select the minimum version you require _and no higher_. In this example, the GLFW dynamic binding is compiled to support GLFW 3.1:
 
 __dub.json__
 ```
@@ -74,22 +76,28 @@ dependency "bindbc-glfw" version="~>0.1.0"
 versions "GLFW_31"
 ```
 
-With this example configuration, `glfwSupport == GLFWSupport.glfw31`. If GLFW 3.1 or later is installed on the user's system, `loadGLFW` will return `GLFWSupport.glfw31`. If only GLFW 3.0 is installed, `loadGLFW` will return `GLFWSupport.badLibrary`, meaning only GLFW 3.0 was loaded. In this case, it's still possible to call GLFW 3.0 functions, but any calls to GLFW 3.1 functions will result in a null pointer access. For this reason, it's recommended to required the version of the library you configured at compile time.
+With this example configuration, `glfwSupport == GLFWSupport.glfw31`. If GLFW 3.1 or later is installed on the user's system, `loadGLFW` will return `GLFWSupport.glfw31`. If only GLFW 3.0 is installed, `loadGLFW` will return `GLFWSupport.badLibrary`. In this scenario, calling `loadedGLFWVersion()` will return a `GLFWSupport` member indicating which version of GLFW, if any, actually loaded. If a lower version was loaded, it's still possible to call functions from that version of GLFW, but any calls to functions from higher versions will result in a null pointer access. For this reason, it's recommended to always specify your required version of the GLFW library at compile time and abort when you receive a `GLFWSupport.badLibrary` return value from `loadGLFW`.
 
-No matter which version was configured, the successfully loaded version can be obtained via a call to `loadedGLFWVersion`. The function `isGLFWLoaded` returns `true` if any version of GLFW was successfully loaded and `false` otherwise.
+No matter which version was configured, the successfully loaded version can be obtained via a call to `loadedGLFWVersion`. It returns one of the following:
 
-Following are the supported versions of GLFW and the corresponding version IDs to pass to the compiler.
+* `GLFWSupport.noLibrary` if `loadGLFW` returned `GLFWSupport.noLibrary`
+* `GLFWSupport.badLibrary` if `loadGLFW` returned `GLFWSupport.badLibrary` and no version of GLFW successfully loaded
+* a member of `GLFWSupport` indicating the version of GLFW that successfully loaded. When `loadGLFW` returns `GLFWSupport.badLibrary`, this will be a version number lower than that configured at compile time. Otherwise, it will be the same as the manifest constant `glfwSupport`.
 
-| Library & Version  | Version ID       |
-|--------------------|------------------|
-|GLFW 3.0            | Default          |
-|GLFW 3.1            | GLFW_31          |
-|GLFW 3.2            | GLFW_32          |
+The function `isGLFWLoaded` returns `true` if any version of GLFW was successfully loaded and `false` otherwise.
+
+Following are the supported versions of GLFW, the corresponding version IDs to pass to the compiler, and the corresponding `GLFWSupport` members.
+
+| Library & Version  | Version ID       | `GLFWSupport` Member |
+|--------------------|------------------|----------------------|
+|GLFW 3.0            | Default          | `GLFWSupport.gl30`   |
+|GLFW 3.1            | GLFW_31          | `GLFWSupport.gl31`   |
+|GLFW 3.2            | GLFW_32          | `GLFWSupport.gl32`   |
 
 ## The static binding
-The static binding has a link-time dependency on either the shared or static libraries for GLFW. On Windows, you can link with the static library or, to use the shared library (`glfw3.dll`), with the import library. On other systems, you can link with either the static library or directly with the shared library.
+The static binding has a link-time dependency on either the shared or the static GLFW library. On Windows, you can link with the static library or, to use the shared library (`glfw3.dll`), with the import library. On other systems, you can link with either the static library or directly with the shared library. This requires the GLFW development package be installed on your system at compile time, either by compiling the GLFW source yourself, downloading the GLFW precompiled binaries for Windows, or installing via a system package manager. [See the GLFW download page](https://www.glfw.org/download.html) for details. 
 
-This requires the GLFW development package be installed on your system at compile time. When linking with the static library, there is no runtime dependency on GLFW. When linking with the shared library (or the import library on Windows), the runtime dependency is the same as the dynamic binding, the difference being that the shared library is no longer loaded manually -- loading is handled automatically by the system when the program is launched.
+When linking with the static library, there is no runtime dependency on GLFW. When linking with the shared library (or the import library on Windows), the runtime dependency is the same as the dynamic binding, the difference being that the shared library is no longer loaded manually -- loading is handled automatically by the system when the program is launched. 
 
 Enabling the static binding can be done in two ways.
 
