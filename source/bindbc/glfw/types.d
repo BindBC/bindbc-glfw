@@ -9,9 +9,9 @@ module bindbc.glfw.types;
 enum GLFWSupport {
     noLibrary,
     badLibrary,
-    glfw30,
-    glfw31,
-    glfw32,
+    glfw30      = 30,
+    glfw31      = 31,
+    glfw32      = 32,
 }
 
 enum GLFW_VERSION_MAJOR = 3;
