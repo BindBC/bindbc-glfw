@@ -112,10 +112,30 @@ extern(C) @nogc nothrow {
         alias pglfwVulkanSupported = int function();
         alias pglfwSetJoystickCallback = GLFWjoystickfun function(GLFWjoystickfun);
     }
+
+    static if(glfwSupport >= GLFWSupport.glfw33) {
+        alias pglfwInitHint = void function(int,int);
+        alias pglfwGetError = int function(const(char)**);
+        alias pglfwGetMonitorWorkarea = void function(GLFWmonitor*,int*,int*,int*,int*);
+        alias pglfwGetMonitorContentScale = void function(GLFWmonitor*,float*,float*);
+        alias pglfwSetMonitorUserPointer = void function(GLFWmonitor*r,void*);
+        alias pglfwGetMonitorUserPointer = void* function(GLFWmonitor*);
+        alias pglfwWindowHintString = void function(int,const(char)*);
+        alias pglfwGetWindowContentScale = void function(GLFWwindow*,float*,float*);
+        alias pglfwGetWindowOpacity = float function(GLFWwindow*);
+        alias pglfwSetWindowOpacity = void function(GLFWwindow*,float);
+        alias pglfwRequestWindowAttention = void function(GLFWwindow*);
+        alias pglfwSetWindowAttrib = void function(GLFWwindow*,int,int);
+        alias pglfwSetWindowMaximizeCallback = GLFWwindowmaximizefun function(GLFWwindow*,GLFWwindowmaximizefun);
+        alias pglfwSetWindowContentScaleCallback = GLFWwindowcontentscalefun function(GLFWwindow*,GLFWwindowcontentscalefun);
+        alias pglfwGetKeyScancode = int function(int);
+        alias pglfwUpdateGamepadMappings = int function(const(char)*);
+        alias pglfwGetGamepadName = const(char)* function(int);
+        alias pglfwGetGamepadState = int function(int,GLFWgamepadstate*);
+    }
  }
 
  __gshared {
-
     pglfwInit glfwInit;
     pglfwTerminate glfwTerminate;
     pglfwGetVersion glfwGetVersion;
@@ -212,6 +232,27 @@ extern(C) @nogc nothrow {
         pglfwGetTimerFrequency glfwGetTimerFrequency;
         pglfwVulkanSupported glfwVulkanSupported;
         pglfwSetJoystickCallback glfwSetJoystickCallback;
+    }
+
+    static if(glfwSupport >= GLFWSupport.glfw33) {
+        pglfwInitHint glfwInitHint;
+        pglfwGetError glfwGetError;
+        pglfwGetMonitorWorkarea glfwGetMonitorWorkarea;
+        pglfwGetMonitorContentScale glfwGetMonitorContentScale;
+        pglfwSetMonitorUserPointer glfwSetMonitorUserPointer;
+        pglfwGetMonitorUserPointer glfwGetMonitorUserPointer;
+        pglfwWindowHintString glfwWindowHintString;
+        pglfwGetWindowContentScale glfwGetWindowContentScale;
+        pglfwGetWindowOpacity glfwGetWindowOpacity;
+        pglfwSetWindowOpacity glfwSetWindowOpacity;
+        pglfwRequestWindowAttention glfwRequestWindowAttention;
+        pglfwSetWindowAttrib glfwSetWindowAttrib;
+        pglfwSetWindowMaximizeCallback glfwSetWindowMaximizeCallback;
+        pglfwSetWindowContentScaleCallback glfwSetWindowContentScaleCallback;
+        pglfwGetKeyScancode glfwGetKeyScancode;
+        pglfwUpdateGamepadMappings glfwUpdateGamepadMappings;
+        pglfwGetGamepadName glfwGetGamepadName;
+        pglfwGetGamepadState glfwGetGamepadState;
     }
  }
 
@@ -373,6 +414,28 @@ extern(C) @nogc nothrow {
         loadedVersion = GLFWSupport.glfw32;
     }
 
+    static if(glfwSupport == GLFWSupport.glfw33) {
+        lib.bindSymbol(cast(void**)&glfwInitHint, "glfwInitHint");
+        lib.bindSymbol(cast(void**)&glfwGetError, "glfwGetError");
+        lib.bindSymbol(cast(void**)&glfwGetMonitorWorkarea, "glfwGetMonitorWorkarea");
+        lib.bindSymbol(cast(void**)&glfwGetMonitorContentScale, "glfwGetMonitorContentScale");
+        lib.bindSymbol(cast(void**)&glfwSetMonitorUserPointer, "glfwSetMonitorUserPointer");
+        lib.bindSymbol(cast(void**)&glfwGetMonitorUserPointer, "glfwGetMonitorUserPointer");
+        lib.bindSymbol(cast(void**)&glfwWindowHintString, "glfwWindowHintString");
+        lib.bindSymbol(cast(void**)&glfwGetWindowContentScale, "glfwGetWindowContentScale");
+        lib.bindSymbol(cast(void**)&glfwGetWindowOpacity, "glfwGetWindowOpacity");
+        lib.bindSymbol(cast(void**)&glfwSetWindowOpacity, "glfwSetWindowOpacity");
+        lib.bindSymbol(cast(void**)&glfwRequestWindowAttention, "glfwRequestWindowAttention");
+        lib.bindSymbol(cast(void**)&glfwSetWindowAttrib, "glfwSetWindowAttrib");
+        lib.bindSymbol(cast(void**)&glfwSetWindowMaximizeCallback, "glfwSetWindowMaximizeCallback");
+        lib.bindSymbol(cast(void**)&glfwSetWindowContentScaleCallback, "glfwSetWindowContentScaleCallback");
+        lib.bindSymbol(cast(void**)&glfwGetKeyScancode, "glfwGetKeyScancode");
+        lib.bindSymbol(cast(void**)&glfwUpdateGamepadMappings, "glfwUpdateGamepadMappings");
+        lib.bindSymbol(cast(void**)&glfwGetGamepadName, "glfwGetGamepadName");
+        lib.bindSymbol(cast(void**)&glfwGetGamepadState, "glfwGetGamepadState");
+
+        loadedVersion = GLFWSupport.glfw33;
+    }
 
     if(errorCount() != errCount) return GLFWSupport.badLibrary;
 
@@ -591,8 +654,41 @@ else static if(bindPosix && !bindAndroid) {
             }
         };
     }
+    static if(glfwSupport >= GLFWSupport.glfw33) {
+        enum bindGLFW_X11= q{
+            extern(C) @nogc nothrow {
+                alias pglfwGetX11Display = Display* function();
+                alias pglfwGetX11Window = Window function(GLFWwindow*);
+                alias pglfwGetX11Adapter = RRCrtc function(GLFWmonitor*);
+                alias pglfwGetX11Monitor = RROutput function(GLFWmonitor*);
+                alias pglfwSetX11SelectionString = void function(const(char)*);
+                alias pglfwGetX11SelectionString = const(char)* function();
+            }
 
-    static if(glfwSupport >= GLFWSupport.glfw31) {
+            __gshared {
+                pglfwGetX11Display glfwGetX11Display;
+                pglfwGetX11Window glfwGetX11Window;
+                pglfwGetX11Adapter glfwGetX11Adapter;
+                pglfwGetX11Monitor glfwGetX11Monitor;
+                pglfwSetX11SelectionString glfwSetX11SelectionString;
+                pglfwGetX11SelectionString glfwGetX11SelectionString;
+            }
+
+            bool loadGLFW_X11() {
+                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_X11");
+
+                auto errCount = errorCount();
+                lib.bindSymbol(cast(void**)&glfwGetX11Display, "glfwGetX11Display");
+                lib.bindSymbol(cast(void**)&glfwGetX11Window,"glfwGetX11Window");
+                lib.bindSymbol(cast(void**)&glfwGetX11Adapter, "glfwGetX11Adapter");
+                lib.bindSymbol(cast(void**)&glfwGetX11Monitor,"glfwGetX11Monitor");
+                lib.bindSymbol(cast(void**)&glfwSetX11SelectionString,"glfwSetX11SelectionString");
+                lib.bindSymbol(cast(void**)&glfwGetX11SelectionString,"glfwGetX11SelectionString");
+                return errorCount() == errCount;
+            }
+        };
+    }
+    else static if(glfwSupport >= GLFWSupport.glfw31) {
         enum bindGLFW_X11= q{
             extern(C) @nogc nothrow {
                 alias pglfwGetX11Display = Display* function();
@@ -668,7 +764,8 @@ else static if(bindPosix && !bindAndroid) {
         };
     }
 
-    static if(glfwSupport >= GLFWSupport.glfw32) {
+    // Support for Mir was removed in GLFW 3.3
+    static if(glfwSupport == GLFWSupport.glfw32) {
         enum bindGLFW_Mir = q{
             extern(C) @nogc nothrow {
                 alias pglfwGetMirDisplay = MirConnection* function();

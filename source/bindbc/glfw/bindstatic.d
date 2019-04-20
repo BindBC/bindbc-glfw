@@ -108,6 +108,27 @@ extern(C) @nogc nothrow {
         int glfwVulkanSupported();
         GLFWjoystickfun glfwSetJoystickCallback(GLFWjoystickfun);
     }
+
+    static if(glfwSupport >= GLFWSupport.glfw33) {
+        void glfwInitHint(int,int);
+        int glfwGetError(const(char)**);
+        void glfwGetMonitorWorkarea(GLFWmonitor*,int*,int*,int*,int*);
+        void glfwGetMonitorContentScale(GLFWmonitor*,float*,float*);
+        void glfwSetMonitorUserPointer(GLFWmonitor*r,void*);
+        void* glfwGetMonitorUserPointer(GLFWmonitor*);
+        void glfwWindowHintString(int,const(char)*);
+        void glfwGetWindowContentScale(GLFWwindow*,float*,float*);
+        float glfwGetWindowOpacity(GLFWwindow*);
+        void glfwSetWindowOpacity(GLFWwindow*,float);
+        void glfwRequestWindowAttention(GLFWwindow*);
+        void glfwSetWindowAttrib(GLFWwindow*,int,int);
+        GLFWwindowmaximizefun glfwSetWindowMaximizeCallback(GLFWwindow*,GLFWwindowmaximizefun);
+        GLFWwindowcontentscalefun glfwSetWindowContentScaleCallback(GLFWwindow*,GLFWwindowcontentscalefun);
+        int glfwGetKeyScancode(int);
+        int glfwUpdateGamepadMappings(const(char)*);
+        const(char)* glfwGetGamepadName(int);
+        int glfwGetGamepadState(int,GLFWgamepadstate*);
+    }
 }
 
 /*
@@ -192,7 +213,19 @@ else version(Posix) {
     else enum bindGLFW_GLX = q{
         extern(C) @nogc nothrow GLXContext glfwGetGLXContext(GLFWwindow*);
     };
-    static if(glfwSupport >= GLFWSupport.glfw31) {
+    static if(glfwSupport >= GLFWSupport.glfw33) {
+        enum bindGLFW_X11 = q{
+            extern(C) @nogc nothrow {
+                Display* glfwGetX11Display();
+                Window glfwGetX11Window(GLFWwindow*);
+                RRCrtc glfwGetX11Adapter(GLFWmonitor*);
+                RROutput glfwGetX11Monitor(GLFWmonitor*);
+                void glfwSetX11SelectionString(const(char)*);
+                const(char)* glfwGetX11SelectionString();
+            }
+        };
+    }
+    else static if(glfwSupport >= GLFWSupport.glfw31) {
         enum bindGLFW_X11 = q{
             extern(C) @nogc nothrow {
                 Display* glfwGetX11Display();
@@ -221,7 +254,8 @@ else version(Posix) {
     }
 
     // Mir
-    static if(glfwSupport >= GLFWSupport.glfw32) {
+    // Removed in GLFW 3.3
+    static if(glfwSupport == GLFWSupport.glfw32) {
         enum bindGLFW_Mir = q{
             extern(C) @nogc nothrow {
                 MirConnection* glfwGetMirDisplay();
