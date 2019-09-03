@@ -382,7 +382,8 @@ extern(C) @nogc nothrow {
     lib.bindSymbol(cast(void**)&glfwExtensionSupported,"glfwExtensionSupported");
     lib.bindSymbol(cast(void**)&glfwGetProcAddress,"glfwGetProcAddress");
 
-    loadedVersion = GLFWSupport.glfw30;
+    if(errorCount() != errCount) return GLFWSupport.badLibrary;
+    else loadedVersion = GLFWSupport.glfw30;
 
     static if(glfwSupport >= GLFWSupport.glfw31) {
         lib.bindSymbol(cast(void**)&glfwGetWindowFrameSize,"glfwGetWindowFrameSize");
@@ -394,7 +395,8 @@ extern(C) @nogc nothrow {
         lib.bindSymbol(cast(void**)&glfwSetCharModsCallback,"glfwSetCharModsCallback");
         lib.bindSymbol(cast(void**)&glfwSetDropCallback,"glfwSetDropCallback");
 
-        loadedVersion = GLFWSupport.glfw31;
+        if(errorCount() != errCount) return GLFWSupport.badLibrary;
+        else loadedVersion = GLFWSupport.glfw31;
     }
 
     static if(glfwSupport >= GLFWSupport.glfw32) {
@@ -411,7 +413,8 @@ extern(C) @nogc nothrow {
         lib.bindSymbol(cast(void**)&glfwVulkanSupported, "glfwVulkanSupported");
         lib.bindSymbol(cast(void**)&glfwSetJoystickCallback, "glfwSetJoystickCallback");
 
-        loadedVersion = GLFWSupport.glfw32;
+        if(errorCount() != errCount) return GLFWSupport.badLibrary;
+        else loadedVersion = GLFWSupport.glfw32;
     }
 
     static if(glfwSupport == GLFWSupport.glfw33) {
@@ -434,10 +437,9 @@ extern(C) @nogc nothrow {
         lib.bindSymbol(cast(void**)&glfwGetGamepadName, "glfwGetGamepadName");
         lib.bindSymbol(cast(void**)&glfwGetGamepadState, "glfwGetGamepadState");
 
-        loadedVersion = GLFWSupport.glfw33;
+        if(errorCount() != errCount) return GLFWSupport.badLibrary;
+        else loadedVersion = GLFWSupport.glfw33;
     }
-
-    if(errorCount() != errCount) return GLFWSupport.badLibrary;
 
     return loadedVersion;
 }
