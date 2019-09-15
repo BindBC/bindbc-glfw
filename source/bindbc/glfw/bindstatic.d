@@ -6,6 +6,7 @@
 
 module bindbc.glfw.bindstatic;
 
+version(BindBC_Static) version = BindGLFW_Static;
 version(BindGLFW_Static):
 
 import bindbc.glfw.types;
