@@ -133,7 +133,7 @@ extern(C) @nogc nothrow {
         alias pglfwGetGamepadName = const(char)* function(int);
         alias pglfwGetGamepadState = int function(int,GLFWgamepadstate*);
     }
- }
+}
 
  __gshared {
     pglfwInit glfwInit;
@@ -254,25 +254,34 @@ extern(C) @nogc nothrow {
         pglfwGetGamepadName glfwGetGamepadName;
         pglfwGetGamepadState glfwGetGamepadState;
     }
- }
+}
 
- private {
-     SharedLib lib;
-     GLFWSupport loadedVersion;
- }
+private {
+    SharedLib lib;
+    GLFWSupport loadedVersion;
+}
 
- void unloadGLFW()
- {
+@nogc nothrow:
+
+void unloadGLFW()
+{
     if(lib != invalidHandle) {
         lib.unload();
     }
- }
+}
 
- GLFWSupport loadedGLFWVersion() { return loadedVersion; }
- bool isGLFWLoaded() { return lib != invalidHandle; }
+GLFWSupport loadedGLFWVersion() @safe
+{
+    return loadedVersion;
+}
 
- GLFWSupport loadGLFW()
- {
+bool isGLFWLoaded() @safe
+{
+    return lib != invalidHandle;
+}
+
+GLFWSupport loadGLFW()
+{
     version(Windows) {
         const(char)[][1] libNames = ["glfw3.dll"];
     }
@@ -298,10 +307,10 @@ extern(C) @nogc nothrow {
         if(ret != GLFWSupport.noLibrary) break;
     }
     return ret;
- }
+}
 
- GLFWSupport loadGLFW(const(char)* libName)
- {
+GLFWSupport loadGLFW(const(char)* libName)
+{
     lib = load(libName);
     if(lib == invalidHandle) {
         return GLFWSupport.noLibrary;
