@@ -1,12 +1,12 @@
 # bindbc-glfw
-This project provides both static and dynamic bindings to the [GLFW library](http://www.glfw.org/index.html). They are `@nogc` and `nothrow` compatible can be compiled for compatibility with `-betterC`. This package is intended as a replacement of [DerelictGLFW3](https://github.com/DerelictOrg/DerelictGLFW3), which is not compatible with `@nogc`,  `nothrow`, or `-betterC`.
+This project provides both static and dynamic bindings to the [GLFW library](http://www.glfw.org/index.html). They are `@nogc` and `nothrow` compatible and can be compiled for compatibility with `-betterC`. This package is intended as a replacement of [DerelictGLFW3](https://github.com/DerelictOrg/DerelictGLFW3), which is not compatible with `@nogc`,  `nothrow`, or `-betterC`.
 
 ## Usage
-By default, `bindbc-glfw` is configured to compile as a dynamic binding that is not `-betterC` compatible. The dynamic binding has no link-time dependency on the GLFW library, so the GLFW shared library must be manually loaded at runtime. When configured as a static binding, there is a link-time dependency on the GLFW library -- either the static library or the appropriate file for linking with shared libraries on your platform (see below).
+By default, `bindbc-glfw` is configured to compile as a dynamic binding that is not `-betterC` compatible. The dynamic binding has no link-time dependency on the GLFW library, so the GLFW shared library must be manually loaded at runtime. When configured as a static binding, there is a link-time dependency on the GLFW library through either the static library or the appropriate file for linking with shared libraries on your platform (see below).
 
 When using DUB to manage your project, the static binding can be enabled via a DUB `subConfiguration` statement in your project's package file. `-betterC` compatibility is also enabled via subconfigurations.
 
-To use GLFW, add `bindbc-glfw` as a dependency to your project's package config file. For example, the following is configured to GLFW as a dynamic binding that is not `-betterC` compatible:
+To use GLFW, add `bindbc-glfw` as a dependency to your project's package config file. For example, the following is configured to use GLFW as a dynamic binding that is not `-betterC` compatible:
 
 __dub.json__
 ```
@@ -90,15 +90,15 @@ Following are the supported versions of GLFW, the corresponding version IDs to p
 
 | Library & Version  | Version ID       | `GLFWSupport` Member |
 |--------------------|------------------|----------------------|
-|GLFW 3.0            | Default          | `GLFWSupport.gl30`   |
-|GLFW 3.1            | GLFW_31          | `GLFWSupport.gl31`   |
-|GLFW 3.2            | GLFW_32          | `GLFWSupport.gl32`   |
-|GLFW 3.3            | GLFW_33          | `GLFWSupport.gl33`   |
+|GLFW 3.0            | Default          | `GLFWSupport.glfw30`   |
+|GLFW 3.1            | GLFW_31          | `GLFWSupport.glfw31`   |
+|GLFW 3.2            | GLFW_32          | `GLFWSupport.glfw32`   |
+|GLFW 3.3            | GLFW_33          | `GLFWSupport.glfw33`   |
 
 ## The static binding
 The static binding has a link-time dependency on either the shared or the static GLFW library. On Windows, you can link with the static library or, to use the shared library (`glfw3.dll`), with the import library. On other systems, you can link with either the static library or directly with the shared library. This requires the GLFW development package be installed on your system at compile time, either by compiling the GLFW source yourself, downloading the GLFW precompiled binaries for Windows, or installing via a system package manager. [See the GLFW download page](https://www.glfw.org/download.html) for details.
 
-When linking with the static library, there is no runtime dependency on GLFW. When linking with the shared library (or the import library on Windows), the runtime dependency is the same as the dynamic binding, the difference being that the shared library is no longer loaded manually -- loading is handled automatically by the system when the program is launched.
+When linking with the static library, there is no runtime dependency on GLFW. When linking with the shared library (or the import library on Windows), the runtime dependency is the same as the dynamic binding, the difference being that the shared library is no longer loaded manually---loading is handled automatically by the system when the program is launched.
 
 Enabling the static binding can be done in two ways.
 
