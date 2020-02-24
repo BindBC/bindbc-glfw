@@ -129,6 +129,11 @@ extern(C) @nogc nothrow {
         alias pglfwSetWindowMaximizeCallback = GLFWwindowmaximizefun function(GLFWwindow*,GLFWwindowmaximizefun);
         alias pglfwSetWindowContentScaleCallback = GLFWwindowcontentscalefun function(GLFWwindow*,GLFWwindowcontentscalefun);
         alias pglfwGetKeyScancode = int function(int);
+        alias pglfwGetJoystickHats = const(ubyte)* function(int,int*);
+        alias pglfwGetJoystickGUID = const(char)* function(int);
+        alias pglfwSetJoystickUserPointer = void function(int,void*);
+        alias pglfwGetJoystickUserPointer = void* function(int);
+        alias pglfwJoystickIsGamepad = int function(int);
         alias pglfwUpdateGamepadMappings = int function(const(char)*);
         alias pglfwGetGamepadName = const(char)* function(int);
         alias pglfwGetGamepadState = int function(int,GLFWgamepadstate*);
@@ -250,6 +255,11 @@ extern(C) @nogc nothrow {
         pglfwSetWindowMaximizeCallback glfwSetWindowMaximizeCallback;
         pglfwSetWindowContentScaleCallback glfwSetWindowContentScaleCallback;
         pglfwGetKeyScancode glfwGetKeyScancode;
+        pglfwGetJoystickHats glfwGetJoystickHats;
+        pglfwGetJoystickGUID glfwGetJoystickGUID;
+        pglfwSetJoystickUserPointer glfwSetJoystickUserPointer;
+        pglfwGetJoystickUserPointer glfwGetJoystickUserPointer;
+        pglfwJoystickIsGamepad glfwJoystickIsGamepad;
         pglfwUpdateGamepadMappings glfwUpdateGamepadMappings;
         pglfwGetGamepadName glfwGetGamepadName;
         pglfwGetGamepadState glfwGetGamepadState;
@@ -442,6 +452,11 @@ GLFWSupport loadGLFW(const(char)* libName)
         lib.bindSymbol(cast(void**)&glfwSetWindowMaximizeCallback, "glfwSetWindowMaximizeCallback");
         lib.bindSymbol(cast(void**)&glfwSetWindowContentScaleCallback, "glfwSetWindowContentScaleCallback");
         lib.bindSymbol(cast(void**)&glfwGetKeyScancode, "glfwGetKeyScancode");
+        lib.bindSymbol(cast(void**)&glfwGetJoystickHats, "glfwGetJoystickHats");
+        lib.bindSymbol(cast(void**)&glfwGetJoystickGUID, "glfwGetJoystickGUID");
+        lib.bindSymbol(cast(void**)&glfwSetJoystickUserPointer, "glfwSetJoystickUserPointer");
+        lib.bindSymbol(cast(void**)&glfwGetJoystickUserPointer, "glfwGetJoystickUserPointer");
+        lib.bindSymbol(cast(void**)&glfwJoystickIsGamepad, "glfwJoystickIsGamepad");
         lib.bindSymbol(cast(void**)&glfwUpdateGamepadMappings, "glfwUpdateGamepadMappings");
         lib.bindSymbol(cast(void**)&glfwGetGamepadName, "glfwGetGamepadName");
         lib.bindSymbol(cast(void**)&glfwGetGamepadState, "glfwGetGamepadState");
