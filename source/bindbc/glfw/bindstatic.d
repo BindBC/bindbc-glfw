@@ -126,6 +126,11 @@ extern(C) @nogc nothrow {
         GLFWwindowmaximizefun glfwSetWindowMaximizeCallback(GLFWwindow*,GLFWwindowmaximizefun);
         GLFWwindowcontentscalefun glfwSetWindowContentScaleCallback(GLFWwindow*,GLFWwindowcontentscalefun);
         int glfwGetKeyScancode(int);
+        const(ubyte)* glfwGetJoystickHats(int,int*);
+        const(char)* glfwGetJoystickGUID(int);
+        void glfwSetJoystickUserPointer(int,void*);
+        void* glfwGetJoystickUserPointer(int);
+        int glfwJoystickIsGamepad(int);
         int glfwUpdateGamepadMappings(const(char)*);
         const(char)* glfwGetGamepadName(int);
         int glfwGetGamepadState(int,GLFWgamepadstate*);
