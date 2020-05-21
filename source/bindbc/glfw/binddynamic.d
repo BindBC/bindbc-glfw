@@ -6,7 +6,8 @@
 
 module bindbc.glfw.binddynamic;
 
-version(BindGLFW_Static) {}
+version(BindBC_Static) {}
+else version(BindGLFW_Static) {}
 else version = BindGLFW_Dynamic;
 
 version(BindGLFW_Dynamic):
