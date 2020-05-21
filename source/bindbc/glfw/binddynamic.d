@@ -291,6 +291,15 @@ bool isGLFWLoaded() @safe
     return lib != invalidHandle;
 }
 
+/* This is exposed solely to support the optional loader mixins
+ at the bottom of the module. 1*/
+ void bindGLFWSymbol(void** ptr, const(char)* symbolName)
+ {
+    assert(lib != invalidHandle, "GLFW must be loaded before attempting to bind optional functions.");
+    lib.bindSymbol(ptr, symbolName);
+ }
+
+
 GLFWSupport loadGLFW()
 {
     version(Windows) {
@@ -506,13 +515,14 @@ static if(glfwSupport >= GLFWSupport.glfw32) {
 
         bool loadGLFW_Vulkan()
         {
-            assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_Vulkan");
+            import bindbc.loader.sharedlib : errorCount;
+            if(!isGLFWLoaded);
 
             auto errCount = errorCount();
-            lib.bindSymbol(cast(void**)&glfwGetRequiredInstanceExtensions, "glfwGetRequiredInstanceExtensions");
-            lib.bindSymbol(cast(void**)&glfwGetInstanceProcAddress, "glfwGetInstanceProcAddress");
-            lib.bindSymbol(cast(void**)&glfwGetPhysicalDevicePresentationSupport, "glfwGetPhysicalDevicePresentationSupport");
-            lib.bindSymbol(cast(void**)&glfwCreateWindowSurface, "glfwCreateWindowSurface");
+            bindGLFWSymbol(cast(void**)&glfwGetRequiredInstanceExtensions, "glfwGetRequiredInstanceExtensions");
+            bindGLFWSymbol(cast(void**)&glfwGetInstanceProcAddress, "glfwGetInstanceProcAddress");
+            bindGLFWSymbol(cast(void**)&glfwGetPhysicalDevicePresentationSupport, "glfwGetPhysicalDevicePresentationSupport");
+            bindGLFWSymbol(cast(void**)&glfwCreateWindowSurface, "glfwCreateWindowSurface");
             return errorCount() == errCount;
         }
     };
@@ -533,12 +543,13 @@ enum bindGLFW_EGL= q{
 
     bool loadGLFW_EGL()
     {
-        assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_EGL");
+        import bindbc.loader.sharedlib : errorCount;
+        if(!isGLFWLoaded) return false;
 
         auto errCount = errorCount();
-        lib.bindSymbol(cast(void**)&glfwGetEGLDisplay, "glfwGetEGLDisplay");
-        lib.bindSymbol(cast(void**)&glfwGetEGLContext, "glfwGetEGLContext");
-        lib.bindSymbol(cast(void**)&glfwGetEGLSurface,"glfwGetEGLSurface");
+        bindGLFWSymbol(cast(void**)&glfwGetEGLDisplay, "glfwGetEGLDisplay");
+        bindGLFWSymbol(cast(void**)&glfwGetEGLContext, "glfwGetEGLContext");
+        bindGLFWSymbol(cast(void**)&glfwGetEGLSurface,"glfwGetEGLSurface");
         return errorCount() == errCount;
     }
 };
@@ -548,8 +559,9 @@ static if(bindWindows) {
         extern(C) @nogc nothrow alias pglfwGetWGLContext = HGLRC function(GLFWwindow* window);
         __gshared pglfwGetWGLContext glfwGetWGLContext;
         void loadGLFW_NSGL() {
-            assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_WGL");
-            lib.bindSymbol(cast(void**)&glfwGetWGLContext,"glfwGetWGLContext");
+            import bindbc.loader.sharedlib : errorCount;
+            if(!isGLFWLoaded) return false;
+            bindGLFWSymbol(cast(void**)&glfwGetWGLContext,"glfwGetWGLContext");
         }
     };
     static if(glfwSupport >= GLFWSupport.glfw31) {
@@ -568,12 +580,13 @@ static if(bindWindows) {
 
             bool loadGLFW_Windows()
             {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_Windows");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetWin32Adapter, "glfwGetWin32Adapter");
-                lib.bindSymbol(cast(void**)&glfwGetWin32Monitor, "glfwGetWin32Monitor");
-                lib.bindSymbol(cast(void**)&glfwGetWin32Window,"glfwGetWin32Window");
+                bindGLFWSymbol(cast(void**)&glfwGetWin32Adapter, "glfwGetWin32Adapter");
+                bindGLFWSymbol(cast(void**)&glfwGetWin32Monitor, "glfwGetWin32Monitor");
+                bindGLFWSymbol(cast(void**)&glfwGetWin32Window,"glfwGetWin32Window");
                 return errorCount() == errCount;
             }
         };
@@ -583,10 +596,11 @@ static if(bindWindows) {
             extern(C) @nogc nothrow alias pglfwGetWin32Window = HWND function(GLFWwindow* window);
              __gshared pglfwGetWin32Window glfwGetWin32Window;
             bool loadGLFW_Windows() {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_Windows");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetWin32Window,"glfwGetWin32Window");
+                bindGLFWSymbol(cast(void**)&glfwGetWin32Window,"glfwGetWin32Window");
                 return errorCount() == errCount;
             }
         };
@@ -599,10 +613,11 @@ else static if(bindMac) {
         __gshared pglfwGetNSGLContext glfwGetNSGLContext;
 
         bool loadGLFW_NSGL() {
-            assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_NSGL");
+            import bindbc.loader.sharedlib : errorCount;
+            if(!isGLFWLoaded) return false;
 
             auto errCount = errorCount();
-            lib.bindSymbol(cast(void**)&glfwGetNSGLContext, "glfwGetNSGLContext");
+            bindGLFWSymbol(cast(void**)&glfwGetNSGLContext, "glfwGetNSGLContext");
             return errorCount() == errCount;
         }
     };
@@ -620,11 +635,12 @@ else static if(bindMac) {
             }
 
             bool loadGLFW_Cocoa() {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_Cocoa");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetCocoaMonitor, "glfwGetCocoaMonitor");
-                lib.bindSymbol(cast(void**)&glfwGetCocoaWindow,"glfwGetCocoaWindow");
+                bindGLFWSymbol(cast(void**)&glfwGetCocoaMonitor, "glfwGetCocoaMonitor");
+                bindGLFWSymbol(cast(void**)&glfwGetCocoaWindow,"glfwGetCocoaWindow");
                 return errorCount() == errCount;
             }
         };
@@ -635,10 +651,11 @@ else static if(bindMac) {
             __gshared pglfwGetCocoaWindow glfwGetCocoaWindow;
 
             bool loadGLFW_Cocoa() {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_Cocoa");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetCocoaWindow,"glfwGetCocoaWindow");
+                bindGLFWSymbol(cast(void**)&glfwGetCocoaWindow,"glfwGetCocoaWindow");
                 return errorCount() == errCount;
             }
         };
@@ -658,11 +675,12 @@ else static if(bindPosix && !bindAndroid) {
             }
 
             bool loadGLFW_GLX() {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_GLX");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetGLXContext, "glfwGetGLXContext");
-                lib.bindSymbol(cast(void**)&glfwGetGLXWindow, "glfwGetGLXWindow");
+                bindGLFWSymbol(cast(void**)&glfwGetGLXContext, "glfwGetGLXContext");
+                bindGLFWSymbol(cast(void**)&glfwGetGLXWindow, "glfwGetGLXWindow");
                 return errorCount() == errCount;
             }
         };
@@ -673,10 +691,11 @@ else static if(bindPosix && !bindAndroid) {
             __gshared pglfwGetGLXContext glfwGetGLXContext;
 
             bool loadGLFW_GLX() {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_GLX");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetGLXContext, "glfwGetGLXContext");
+                bindGLFWSymbol(cast(void**)&glfwGetGLXContext, "glfwGetGLXContext");
                 return errorCount() == errCount;
             }
         };
@@ -702,15 +721,16 @@ else static if(bindPosix && !bindAndroid) {
             }
 
             bool loadGLFW_X11() {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_X11");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetX11Display, "glfwGetX11Display");
-                lib.bindSymbol(cast(void**)&glfwGetX11Window,"glfwGetX11Window");
-                lib.bindSymbol(cast(void**)&glfwGetX11Adapter, "glfwGetX11Adapter");
-                lib.bindSymbol(cast(void**)&glfwGetX11Monitor,"glfwGetX11Monitor");
-                lib.bindSymbol(cast(void**)&glfwSetX11SelectionString,"glfwSetX11SelectionString");
-                lib.bindSymbol(cast(void**)&glfwGetX11SelectionString,"glfwGetX11SelectionString");
+                bindGLFWSymbol(cast(void**)&glfwGetX11Display, "glfwGetX11Display");
+                bindGLFWSymbol(cast(void**)&glfwGetX11Window,"glfwGetX11Window");
+                bindGLFWSymbol(cast(void**)&glfwGetX11Adapter, "glfwGetX11Adapter");
+                bindGLFWSymbol(cast(void**)&glfwGetX11Monitor,"glfwGetX11Monitor");
+                bindGLFWSymbol(cast(void**)&glfwSetX11SelectionString,"glfwSetX11SelectionString");
+                bindGLFWSymbol(cast(void**)&glfwGetX11SelectionString,"glfwGetX11SelectionString");
                 return errorCount() == errCount;
             }
         };
@@ -732,13 +752,14 @@ else static if(bindPosix && !bindAndroid) {
             }
 
             bool loadGLFW_X11() {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_X11");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetX11Display, "glfwGetX11Display");
-                lib.bindSymbol(cast(void**)&glfwGetX11Window,"glfwGetX11Window");
-                lib.bindSymbol(cast(void**)&glfwGetX11Adapter, "glfwGetX11Adapter");
-                lib.bindSymbol(cast(void**)&glfwGetX11Monitor,"glfwGetX11Monitor");
+                bindGLFWSymbol(cast(void**)&glfwGetX11Display, "glfwGetX11Display");
+                bindGLFWSymbol(cast(void**)&glfwGetX11Window,"glfwGetX11Window");
+                bindGLFWSymbol(cast(void**)&glfwGetX11Adapter, "glfwGetX11Adapter");
+                bindGLFWSymbol(cast(void**)&glfwGetX11Monitor,"glfwGetX11Monitor");
                 return errorCount() == errCount;
             }
         };
@@ -756,11 +777,12 @@ else static if(bindPosix && !bindAndroid) {
             }
 
             bool loadGLFW_X11() {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_X11");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetX11Display, "glfwGetX11Display");
-                lib.bindSymbol(cast(void**)&glfwGetX11Window,"glfwGetX11Window");
+                bindGLFWSymbol(cast(void**)&glfwGetX11Display, "glfwGetX11Display");
+                bindGLFWSymbol(cast(void**)&glfwGetX11Window,"glfwGetX11Window");
                 return errorCount() == errCount;
             }
         };
@@ -780,12 +802,13 @@ else static if(bindPosix && !bindAndroid) {
             }
 
             bool loadGLFW_Wayland() {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_Wayland");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetWaylandDisplay, "glfwGetWaylandDisplay");
-                lib.bindSymbol(cast(void**)&glfwGetWaylandMonitor, "glfwGetWaylandMonitor");
-                lib.bindSymbol(cast(void**)&glfwGetWaylandWindow,"glfwGetWaylandWindow");
+                bindGLFWSymbol(cast(void**)&glfwGetWaylandDisplay, "glfwGetWaylandDisplay");
+                bindGLFWSymbol(cast(void**)&glfwGetWaylandMonitor, "glfwGetWaylandMonitor");
+                bindGLFWSymbol(cast(void**)&glfwGetWaylandWindow,"glfwGetWaylandWindow");
                 return errorCount() == errCount;
             }
         };
@@ -807,12 +830,13 @@ else static if(bindPosix && !bindAndroid) {
             }
 
             bool loadGLFW_Mir() {
-                assert(lib != invalidHandle, "loadGLFW must be successfully called before loadGLFW_Mir");
+                import bindbc.loader.sharedlib : errorCount;
+                if(!isGLFWLoaded) return false;
 
                 auto errCount = errorCount();
-                lib.bindSymbol(cast(void**)&glfwGetMirDisplay, "glfwGetMirDisplay");
-                lib.bindSymbol(cast(void**)&glfwGetMirMonitor, "glfwGetMirMonitor");
-                lib.bindSymbol(cast(void**)&glfwGetMirWindow,"glfwGetMirWindow");
+                bindGLFWSymbol(cast(void**)&glfwGetMirDisplay, "glfwGetMirDisplay");
+                bindGLFWSymbol(cast(void**)&glfwGetMirMonitor, "glfwGetMirMonitor");
+                bindGLFWSymbol(cast(void**)&glfwGetMirWindow,"glfwGetMirWindow");
                 return errorCount() == errCount;
             }
         };

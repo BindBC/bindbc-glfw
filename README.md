@@ -90,10 +90,10 @@ Following are the supported versions of GLFW, the corresponding version IDs to p
 
 | Library & Version  | Version ID       | `GLFWSupport` Member |
 |--------------------|------------------|----------------------|
-|GLFW 3.0            | Default          | `GLFWSupport.glfw30`   |
-|GLFW 3.1            | GLFW_31          | `GLFWSupport.glfw31`   |
-|GLFW 3.2            | GLFW_32          | `GLFWSupport.glfw32`   |
-|GLFW 3.3            | GLFW_33          | `GLFWSupport.glfw33`   |
+|GLFW 3.0            | Default          | `GLFWSupport.glfw30` |
+|GLFW 3.1            | GLFW_31          | `GLFWSupport.glfw31` |
+|GLFW 3.2            | GLFW_32          | `GLFWSupport.glfw32` |
+|GLFW 3.3            | GLFW_33          | `GLFWSupport.glfw33` |
 
 ## The static binding
 The static binding has a link-time dependency on either the shared or the static GLFW library. On Windows, you can link with the static library or, to use the shared library (`glfw3.dll`), with the import library. On other systems, you can link with either the static library or directly with the shared library. This requires the GLFW development package be installed on your system at compile time, either by compiling the GLFW source yourself, downloading the GLFW precompiled binaries for Windows, or installing via a system package manager. [See the GLFW download page](https://www.glfw.org/download.html) for details.
@@ -149,7 +149,6 @@ libs "glfw3"
 This has the benefit that it completely excludes from the build any source modules related to the dynamic binding, i.e. they will never be passed to the compiler.
 
 ## `betterC` support
-
 `betterC` support is enabled via the `dynamicBC` and `staticBC` subconfigurations, for dynamic and static bindings respectively. To enable the static binding with `-betterC` support:
 
 __dub.json__
@@ -171,3 +170,57 @@ libs "glfw3"
 ```
 
 When not using DUB to manage your project, first use DUB to compile the BindBC libraries with the `dynamicBC` or `staticBC` configuration, then pass `-betterC` to the compiler when building your project.
+
+## Optional platform-specific functions
+GLFW ships with some platform-specific functions that are useful for obtaining, e.g., native window handles, OpenGL context handles, etc. By default, these are not compiled into the binding. Doing so would require either importing specific platform bindings, or using private declarations for the platform-specific types. Both approaches would potentially conflict with user code that uses a different platform-specific binding. (Only the Windows API has bindings in a standard D distribution, but for consistency, it is not used internally either.)
+
+To enable these functions, string constants are provided that can be mixed into to user code. Doing so will declare the relevant functions along with a loader function that must be called in addition to `loadGLFW`. This loader function returns `true` if the functions are successfully loaded and `false` otherwise.
+
+The string constants are named with the previx `bindGLFW_`, followed by a platform-specific identifer. The load functions are use the prefix `loadGLFW_` followed by the same platform-specific identifier.
+
+For example, to declare and load the Windows-specific functions:
+
+```d
+// Ideally, these functions should be mixed in where they are needed, or in a module
+// that can be imported where they are needed, such as a project-specific platform module.
+module myproject.platform;
+
+version(Windows) {
+    // Import the platform API bindings
+    import core.sys.windows.windows;
+
+    // Mixin the function declarations and loader
+    mixin(bindGLFW_Windows);
+}
+
+// Then wherever you choose to load the shared libraries, say in `main`:
+module myproject.app;
+
+void main() {
+    import myproject.platform : loadGLFW_Windows;
+
+    if(loadGLFW() != glfwSupport) {
+        // handle error
+    }
+
+    if(!loadGLFW_Windows()) {
+        // handle error
+    }
+}
+```
+
+The platform-specific functions are divided categorized between UI-related APIs (for Window handles, etc.) and OpenGL-related APIs (for platform-specific OpenGL contexts). The following table shows the available constants and loaders. For details on the specifics of the plaform-specific functions, please see [the GLFW "Native access" documentation](https://www.glfw.org/docs/latest/group__native.html).
+
+
+| Platform API       | Constant           | Loader               | Note                 |
+|--------------------|--------------------|----------------------|----------------------|
+| Windows UI (Win32) | `bindGLFW_Windows` | `loadGLFW_Windows`   |                      |
+| Windows GL (WGL)   | `bindGLFW_WGL`     | `loadGLFW_WGL`       |                      |
+| OSX UI (Cocoa)     | `bindGLFW_Cocoa`   | `loadGLFW_Cocoa`     |                      |
+| OSX GL (NGL)       | `bindGLFW_NGL`     | `loadGLFW_NGL`       |                      |
+| Linux/BSD UI (X11) | `bindGLFW_X11`     | `loadGLFW_X11`       |                      |
+| Linux/BSD GL (GLX) | `bindGLFW_GLX`     | `loadGLFW_GLX`       |                      |
+| Linux UI (Wayland) | `bindGLFW_Wayland` | `loadGLFW_Wayland`   |                      |
+| Linux UI (Mir)     | `bindGLFW_Mir`     | `loadGLFW_Mir`       | GLFW 3.2 only        |
+| Mobile UI/GL (EGL) | `bindGLFW_EGL`     | `loadGLFW_EGL`       |                      |
+| All UI (Vulkan)    | `bindGLFW_Vulkan`  | `loadGLFW_Vulkan`    | GLFW 3.2 and higher  |
