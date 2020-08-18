@@ -516,7 +516,7 @@ static if(glfwSupport >= GLFWSupport.glfw32) {
         bool loadGLFW_Vulkan()
         {
             import bindbc.loader.sharedlib : errorCount;
-            if(!isGLFWLoaded);
+            if(!isGLFWLoaded) return false;
 
             auto errCount = errorCount();
             bindGLFWSymbol(cast(void**)&glfwGetRequiredInstanceExtensions, "glfwGetRequiredInstanceExtensions");
