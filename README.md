@@ -11,13 +11,13 @@ To use GLFW, add `bindbc-glfw` as a dependency to your project's package config 
 __dub.json__
 ```
 dependencies {
-    "bindbc-glfw": "~>0.5.0",
+    "bindbc-glfw": "~>0.10.0",
 }
 ```
 
 __dub.sdl__
 ```
-dependency "bindbc-glfw" version="~>0.5.0"
+dependency "bindbc-glfw" version="~>0.10.0"
 ```
 
 ### The dynamic binding
@@ -65,14 +65,14 @@ By default, the `bindbc-glfw` binding is configured to compile to load GLFW 3.0.
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-glfw": "~>0.5.0"
+    "bindbc-glfw": "~>0.10.0"
 },
 "versions": ["GLFW_31"]
 ```
 
 __dub.sdl__
 ```
-dependency "bindbc-glfw" version="~>0.5.0"
+dependency "bindbc-glfw" version="~>0.10.0"
 versions "GLFW_31"
 ```
 
@@ -112,7 +112,7 @@ When using DUB, its `versions` directive is an option. For example, when using t
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-glfw": "~>0.5.0"
+    "bindbc-glfw": "~>0.10.0"
 },
 "versions": ["BindGLFW_Static"],
 "libs": ["glfw3"]
@@ -120,7 +120,7 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-glfw" version="~>0.5.0"
+dependency "bindbc-glfw" version="~>0.10.0"
 versions "BindGLFW_Static"
 libs "glfw3"
 ```
@@ -131,7 +131,7 @@ Instead of using DUB's `versions` directive, a `subConfiguration` can be used. E
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-glfw": "~>0.5.0"
+    "bindbc-glfw": "~>0.10.0"
 },
 "subConfigurations": {
     "bindbc-glfw": "static"
@@ -141,7 +141,7 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-glfw" version="~>0.5.0"
+dependency "bindbc-glfw" version="~>0.10.0"
 subConfiguration "bindbc-glfw" "static"
 libs "glfw3"
 ```
@@ -154,7 +154,7 @@ This has the benefit that it completely excludes from the build any source modul
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-glfw": "~>0.5.0"
+    "bindbc-glfw": "~>0.10.0"
 },
 "subConfigurations": {
     "bindbc-glfw": "staticBC"
@@ -164,7 +164,7 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-glfw" version="~>0.5.0"
+dependency "bindbc-glfw" version="~>0.10.0"
 subConfiguration "bindbc-glfw" "staticBC"
 libs "glfw3"
 ```
