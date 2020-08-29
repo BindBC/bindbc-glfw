@@ -115,7 +115,7 @@ extern(C) @nogc nothrow {
         int glfwGetError(const(char)**);
         void glfwGetMonitorWorkarea(GLFWmonitor*,int*,int*,int*,int*);
         void glfwGetMonitorContentScale(GLFWmonitor*,float*,float*);
-        void glfwSetMonitorUserPointer(GLFWmonitor*r,void*);
+        void glfwSetMonitorUserPointer(GLFWmonitor*,void*);
         void* glfwGetMonitorUserPointer(GLFWmonitor*);
         void glfwWindowHintString(int,const(char)*);
         void glfwGetWindowContentScale(GLFWwindow*,float*,float*);
