@@ -119,7 +119,7 @@ extern(C) @nogc nothrow {
         alias pglfwGetError = int function(const(char)**);
         alias pglfwGetMonitorWorkarea = void function(GLFWmonitor*,int*,int*,int*,int*);
         alias pglfwGetMonitorContentScale = void function(GLFWmonitor*,float*,float*);
-        alias pglfwSetMonitorUserPointer = void function(GLFWmonitor*r,void*);
+        alias pglfwSetMonitorUserPointer = void function(GLFWmonitor*,void*);
         alias pglfwGetMonitorUserPointer = void* function(GLFWmonitor*);
         alias pglfwWindowHintString = void function(int,const(char)*);
         alias pglfwGetWindowContentScale = void function(GLFWwindow*,float*,float*);
