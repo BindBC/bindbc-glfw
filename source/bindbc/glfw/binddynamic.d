@@ -292,12 +292,12 @@ bool isGLFWLoaded() @safe
 }
 
 /* This is exposed solely to support the optional loader mixins
- at the bottom of the module. 1*/
- void bindGLFWSymbol(void** ptr, const(char)* symbolName)
- {
+ at the bottom of the module. */
+void bindGLFWSymbol(void** ptr, const(char)* symbolName)
+{
     assert(lib != invalidHandle, "GLFW must be loaded before attempting to bind optional functions.");
     lib.bindSymbol(ptr, symbolName);
- }
+}
 
 
 GLFWSupport loadGLFW()
@@ -513,7 +513,7 @@ static if(glfwSupport >= GLFWSupport.glfw32) {
             pglfwCreateWindowSurface glfwCreateWindowSurface;
         }
 
-        bool loadGLFW_Vulkan()
+        @nogc nothrow bool loadGLFW_Vulkan()
         {
             import bindbc.loader.sharedlib : errorCount;
             if(!isGLFWLoaded) return false;
@@ -541,7 +541,7 @@ enum bindGLFW_EGL= q{
         pglfwGetEGLSurface glfwGetEGLSurface;
     }
 
-    bool loadGLFW_EGL()
+    @nogc nothrow bool loadGLFW_EGL()
     {
         import bindbc.loader.sharedlib : errorCount;
         if(!isGLFWLoaded) return false;
@@ -578,7 +578,7 @@ static if(bindWindows) {
                 pglfwGetWin32Window glfwGetWin32Window;
             }
 
-            bool loadGLFW_Windows()
+            @nogc nothrow bool loadGLFW_Windows()
             {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
@@ -612,7 +612,7 @@ else static if(bindMac) {
         extern(C) @nogc nothrow alias pglfwGetNSGLContext = id function(GLFWwindow*);
         __gshared pglfwGetNSGLContext glfwGetNSGLContext;
 
-        bool loadGLFW_NSGL() {
+        @nogc nothrow bool loadGLFW_NSGL() {
             import bindbc.loader.sharedlib : errorCount;
             if(!isGLFWLoaded) return false;
 
@@ -634,7 +634,7 @@ else static if(bindMac) {
                 pglfwGetCocoaWindow glfwGetCocoaWindow;
             }
 
-            bool loadGLFW_Cocoa() {
+            @nogc nothrow bool loadGLFW_Cocoa() {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
 
@@ -650,7 +650,7 @@ else static if(bindMac) {
             extern(C) @nogc nothrow alias pglfwGetCocoaWindow = id function(GLFWwindow* window);
             __gshared pglfwGetCocoaWindow glfwGetCocoaWindow;
 
-            bool loadGLFW_Cocoa() {
+            @nogc nothrow bool loadGLFW_Cocoa() {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
 
@@ -674,7 +674,7 @@ else static if(bindPosix && !bindAndroid) {
                 pglfwGetGLXWindow glfwGetGLXWindow;
             }
 
-            bool loadGLFW_GLX() {
+            @nogc nothrow bool loadGLFW_GLX() {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
 
@@ -690,7 +690,7 @@ else static if(bindPosix && !bindAndroid) {
             extern(C) @nogc nothrow alias pglfwGetGLXContext = GLXContext function(GLFWwindow*);
             __gshared pglfwGetGLXContext glfwGetGLXContext;
 
-            bool loadGLFW_GLX() {
+            @nogc nothrow bool loadGLFW_GLX() {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
 
@@ -720,7 +720,7 @@ else static if(bindPosix && !bindAndroid) {
                 pglfwGetX11SelectionString glfwGetX11SelectionString;
             }
 
-            bool loadGLFW_X11() {
+            @nogc nothrow bool loadGLFW_X11() {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
 
@@ -751,7 +751,7 @@ else static if(bindPosix && !bindAndroid) {
                 pglfwGetX11Monitor glfwGetX11Monitor;
             }
 
-            bool loadGLFW_X11() {
+            @nogc nothrow bool loadGLFW_X11() {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
 
@@ -776,7 +776,7 @@ else static if(bindPosix && !bindAndroid) {
                 pglfwGetX11Window glfwGetX11Window;
             }
 
-            bool loadGLFW_X11() {
+            @nogc nothrow bool loadGLFW_X11() {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
 
@@ -801,7 +801,7 @@ else static if(bindPosix && !bindAndroid) {
                 pglfwGetWaylandWindow glfwGetWaylandWindow;
             }
 
-            bool loadGLFW_Wayland() {
+            @nogc nothrow bool loadGLFW_Wayland() {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
 
@@ -829,7 +829,7 @@ else static if(bindPosix && !bindAndroid) {
                 pglfwGetMirWindow glfwGetMirWindow;
             }
 
-            bool loadGLFW_Mir() {
+            @nogc nothrow bool loadGLFW_Mir() {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
 
