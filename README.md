@@ -224,3 +224,12 @@ The platform-specific functions are divided categorized between UI-related APIs 
 | Linux UI (Mir)     | `bindGLFW_Mir`     | `loadGLFW_Mir`       | GLFW 3.2 only        |
 | Mobile UI/GL (EGL) | `bindGLFW_EGL`     | `loadGLFW_EGL`       |                      |
 | All UI (Vulkan)    | `bindGLFW_Vulkan`  | `loadGLFW_Vulkan`    | GLFW 3.2 and higher  |
+
+## `@nogc` callbacks
+GLFW makes use of C-style callbacks for event handling. By default, these are alaised as `extern(C) nothrow` function pointers in bindbc-glfw. So any function you want to designate as a GLFW callback must match not only the function signature that GLFW expects, but also must be annotated as `extern(C) nothrow`.
+
+`@nogc` is *not* applied to the callback aliases because it is perfectly reasonable to use the GC on the D side of a C callback. And since the callback will usually be called from GLFW and not from the D code, then the `@nogc` attribute is largely irrelevant here even in programs where it is used everywhere else.
+
+However, it is not impossible that a function intended to serve as a GLFW callback may also be implemented with the intent that it may be called directly from D. In that situation, if the calling function is `@nogc`, then the callback should also be.
+
+The binding supports `@nogc` callbacks via the `BindGLFW_NoGC_Callbacks` version. Add this to your dub recipe's `versions` directive or the compiler command line. Just remember that any function you want to designate as a GLFW callback will then need to be `extern(C) @nogc nothrow`.

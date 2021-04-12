@@ -407,29 +407,57 @@ struct GLFWmonitor;
 struct GLFWwindow;
 static if(glfwSupport >= GLFWSupport.glfw31) struct GLFWcursor;
 
-extern(C) nothrow {
-    alias GLFWerrorfun = void function(int,const(char)*);
-    alias GLFWwindowposfun = void function(GLFWwindow*,int,int);
-    alias GLFWwindowsizefun = void function(GLFWwindow*,int,int);
-    alias GLFWwindowclosefun = void function(GLFWwindow*);
-    alias GLFWwindowrefreshfun = void function(GLFWwindow*);
-    alias GLFWwindowfocusfun = void function(GLFWwindow*,int);
-    alias GLFWwindowiconifyfun = void function(GLFWwindow*,int);
-    static if(glfwSupport >= GLFWSupport.glfw33) alias GLFWwindowmaximizefun = void function(GLFWwindow*,int);
-    alias GLFWframebuffersizefun = void function(GLFWwindow*,int,int);
-    static if(glfwSupport >= GLFWSupport.glfw33) alias GLFWwindowcontentscalefun = void function(GLFWwindow*,float,float);
-    alias GLFWmousebuttonfun = void function(GLFWwindow*,int,int,int);
-    alias GLFWcursorposfun = void function(GLFWwindow*,double,double);
-    alias GLFWcursorenterfun = void function(GLFWwindow*,int);
-    alias GLFWscrollfun = void function(GLFWwindow*,double,double);
-    alias GLFWkeyfun = void function(GLFWwindow*,int,int,int,int);
-    alias GLFWcharfun = void function(GLFWwindow*,uint);
-    static if(glfwSupport >= GLFWSupport.glfw31) {
-        alias GLFWcharmodsfun = void function(GLFWwindow*,uint,int);
-        alias GLFWdropfun = void function(GLFWwindow*,int,const(char*)*);
+version(BindGLFW_NoGC_Callbacks) {
+    extern(C) @nogc nothrow {
+        alias GLFWerrorfun = void function(int,const(char)*);
+        alias GLFWwindowposfun = void function(GLFWwindow*,int,int);
+        alias GLFWwindowsizefun = void function(GLFWwindow*,int,int);
+        alias GLFWwindowclosefun = void function(GLFWwindow*);
+        alias GLFWwindowrefreshfun = void function(GLFWwindow*);
+        alias GLFWwindowfocusfun = void function(GLFWwindow*,int);
+        alias GLFWwindowiconifyfun = void function(GLFWwindow*,int);
+        static if(glfwSupport >= GLFWSupport.glfw33) alias GLFWwindowmaximizefun = void function(GLFWwindow*,int);
+        alias GLFWframebuffersizefun = void function(GLFWwindow*,int,int);
+        static if(glfwSupport >= GLFWSupport.glfw33) alias GLFWwindowcontentscalefun = void function(GLFWwindow*,float,float);
+        alias GLFWmousebuttonfun = void function(GLFWwindow*,int,int,int);
+        alias GLFWcursorposfun = void function(GLFWwindow*,double,double);
+        alias GLFWcursorenterfun = void function(GLFWwindow*,int);
+        alias GLFWscrollfun = void function(GLFWwindow*,double,double);
+        alias GLFWkeyfun = void function(GLFWwindow*,int,int,int,int);
+        alias GLFWcharfun = void function(GLFWwindow*,uint);
+        static if(glfwSupport >= GLFWSupport.glfw31) {
+            alias GLFWcharmodsfun = void function(GLFWwindow*,uint,int);
+            alias GLFWdropfun = void function(GLFWwindow*,int,const(char*)*);
+        }
+        alias GLFWmonitorfun = void function(GLFWmonitor*,int);
+        static if(glfwSupport >= GLFWSupport.glfw32) alias GLFWjoystickfun = void function(int,int);
     }
-    alias GLFWmonitorfun = void function(GLFWmonitor*,int);
-    static if(glfwSupport >= GLFWSupport.glfw32) alias GLFWjoystickfun = void function(int,int);
+}
+else {
+    extern(C) nothrow {
+        alias GLFWerrorfun = void function(int,const(char)*);
+        alias GLFWwindowposfun = void function(GLFWwindow*,int,int);
+        alias GLFWwindowsizefun = void function(GLFWwindow*,int,int);
+        alias GLFWwindowclosefun = void function(GLFWwindow*);
+        alias GLFWwindowrefreshfun = void function(GLFWwindow*);
+        alias GLFWwindowfocusfun = void function(GLFWwindow*,int);
+        alias GLFWwindowiconifyfun = void function(GLFWwindow*,int);
+        static if(glfwSupport >= GLFWSupport.glfw33) alias GLFWwindowmaximizefun = void function(GLFWwindow*,int);
+        alias GLFWframebuffersizefun = void function(GLFWwindow*,int,int);
+        static if(glfwSupport >= GLFWSupport.glfw33) alias GLFWwindowcontentscalefun = void function(GLFWwindow*,float,float);
+        alias GLFWmousebuttonfun = void function(GLFWwindow*,int,int,int);
+        alias GLFWcursorposfun = void function(GLFWwindow*,double,double);
+        alias GLFWcursorenterfun = void function(GLFWwindow*,int);
+        alias GLFWscrollfun = void function(GLFWwindow*,double,double);
+        alias GLFWkeyfun = void function(GLFWwindow*,int,int,int,int);
+        alias GLFWcharfun = void function(GLFWwindow*,uint);
+        static if(glfwSupport >= GLFWSupport.glfw31) {
+            alias GLFWcharmodsfun = void function(GLFWwindow*,uint,int);
+            alias GLFWdropfun = void function(GLFWwindow*,int,const(char*)*);
+        }
+        alias GLFWmonitorfun = void function(GLFWmonitor*,int);
+        static if(glfwSupport >= GLFWSupport.glfw32) alias GLFWjoystickfun = void function(int,int);
+    }
 }
 
 struct GLFWvidmode {
