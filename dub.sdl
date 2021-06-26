@@ -10,12 +10,12 @@ targetName "BindBC_GLFW"
 
 configuration "dynamic" {
     versions "BindGLFW_Dynamic"
-    dependency "bindbc-loader" version="~>0.3.0"
+    dependency "bindbc-loader" version="~>1.0.0"
 }
 
 configuration "dynamicBC" {
     versions "BindGLFW_Dynamic"
-    dependency "bindbc-loader" version="~>0.3.0"
+    dependency "bindbc-loader" version="~>1.0.0"
     subConfiguration "bindbc-loader" "yesBC"
     dflags "-betterC"
 }
