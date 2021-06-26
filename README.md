@@ -2,6 +2,8 @@
 This project provides both static and dynamic bindings to [the GLFW library](http://www.glfw.org/index.html). They are `@nogc` and `nothrow` compatible and can be compiled for compatibility with `-betterC`. This package is intended as a replacement of [DerelictGLFW3](https://github.com/DerelictOrg/DerelictGLFW3), which is not compatible with `@nogc`,  `nothrow`, or `-betterC`.
 
 ## Usage
+__NOTE__: This documentation describes how to use bindbc-glfw. As the maintainer of this library, I do not provide instructions on using the GLFW library. However, since this is a direct binding to the GLFW API, the existing GLFW documentation and tutorials can be adapted to D with few modifications (those being minor differences in the language, such as array declaration syntax). I learned how to use GLFW [solely from the API documentation and examples at glfw.org](https://www.glfw.org/docs/latest/). There are tutorials out there of varying quality, but the documentation is detailed enough that they probably aren't necessary.
+
 By default, bindbc-glfw is configured to compile as a dynamic binding that is not `-betterC` compatible. The dynamic binding has no link-time dependency on the GLFW library, so the GLFW shared library must be manually loaded at runtime. When configured as a static binding, there is a link-time dependency on the GLFW library through either the static library or the appropriate file for linking with shared libraries on your platform (see below).
 
 When using DUB to manage your project, the static binding can be enabled via a DUB `subConfiguration` statement in your project's package file. `-betterC` compatibility is also enabled via subconfigurations.
