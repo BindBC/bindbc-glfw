@@ -23,7 +23,7 @@ dependency "bindbc-glfw" version="~>1.0.0"
 ### The dynamic binding
 The dynamic binding requires no special configuration when using DUB to manage your project. There is no link-time dependency. At runtime, the GLFW shared library is required to be on the shared library search path of the user's system. On Windows, this is typically handled by distributing the GLFW DLL with your program. On other systems, it usually means the user must install the GLFW runtime library through a package manager.
 
-To load the shared library, you need to call the `loadGLFW` function. This returns a member of the `GLFWSupport` enumeration (See [the bindbc.loader README](https://github.com/BindBC/bindbc-loader/blob/master/README.md) for the error handling API):
+To load the shared library, you need to call the `loadGLFW` function. This returns a member of the `GLFWSupport` enumeration:
 
 * `GLFWSupport.noLibrary` indicating that the library failed to load (it couldn't be found)
 * `GLFWSupport.badLibrary` indicating that one or more symbols in the library failed to load
@@ -59,7 +59,7 @@ if(ret != glfwSupport) {
  will be platform specific, as in this example which attempts to load `glfw3.dll` from the `libs` subdirectory,
  relative to the executable, only on Windows.
 */
-version(Windows) loadGLFW("libs/glfw3.dll")
+version(Windows) loadGLFW("libs/glfw3.dll");
 ```
 
 [The error reporting API](https://github.com/BindBC/bindbc-loader#error-handling) in bindbc-loader can be used to log error messages.
