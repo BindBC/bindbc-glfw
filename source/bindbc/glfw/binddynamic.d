@@ -558,10 +558,14 @@ static if(bindWindows) {
     enum bindGLFW_WGL = q{
         extern(C) @nogc nothrow alias pglfwGetWGLContext = HGLRC function(GLFWwindow* window);
         __gshared pglfwGetWGLContext glfwGetWGLContext;
-        void loadGLFW_NSGL() {
+
+        @nogc nothrow bool loadGLFW_WGL() {
             import bindbc.loader.sharedlib : errorCount;
             if(!isGLFWLoaded) return false;
+
+            auto errCount = errorCount();
             bindGLFWSymbol(cast(void**)&glfwGetWGLContext,"glfwGetWGLContext");
+            return errorCount() == errCount;
         }
     };
     static if(glfwSupport >= GLFWSupport.glfw31) {
@@ -595,7 +599,7 @@ static if(bindWindows) {
         enum bindGLFW_Windows = q{
             extern(C) @nogc nothrow alias pglfwGetWin32Window = HWND function(GLFWwindow* window);
              __gshared pglfwGetWin32Window glfwGetWin32Window;
-            bool loadGLFW_Windows() {
+            @nogc nothrow bool loadGLFW_Windows() {
                 import bindbc.loader.sharedlib : errorCount;
                 if(!isGLFWLoaded) return false;
 
