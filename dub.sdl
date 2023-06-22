@@ -1,23 +1,20 @@
 name "bindbc-glfw"
-description "Dynamic and static bindings to GLFW3, compatible with -betterC, @nogc, and nothrow."
-homepage ""
-authors "Mike Parker"
-license "Boost"
+description "Static & dynamic bindings to GLFW3, compatible with BetterC, @nogc, and nothrow."
+authors "Aya Partridge" "Mike Parker"
+license "BSL-1.0"
 
 targetType "staticLibrary"
 targetPath "lib"
 targetName "BindBC_GLFW"
 
 configuration "dynamic" {
-    versions "BindGLFW_Dynamic"
     dependency "bindbc-loader" version="~>1.0.0"
 }
 
 configuration "dynamicBC" {
-    versions "BindGLFW_Dynamic"
     dependency "bindbc-loader" version="~>1.0.0"
     subConfiguration "bindbc-loader" "yesBC"
-    dflags "-betterC"
+    buildOptions "betterC"
 }
 
 configuration "static" {
@@ -26,7 +23,7 @@ configuration "static" {
 }
 
 configuration "staticBC" {
-    dflags "-betterC"
     versions "BindGLFW_Static"
+    buildOptions "betterC"
     excludedSourceFiles "source/bindbc/glfw/binddynamic.d"
 }

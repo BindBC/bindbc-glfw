@@ -1,20 +1,15 @@
 /+
 +                Copyright 2023 Aya Partridge
-+          Copyright 2018 - 2021 Michael D. Parker
++          Copyright 2018 - 2022 Michael D. Parker
 + Distributed under the Boost Software License, Version 1.0.
 +     (See accompanying file LICENSE_1_0.txt or copy at
 +           http://www.boost.org/LICENSE_1_0.txt)
 +/
 module bindbc.glfw.binddynamic;
 
-version(BindBC_Static){
-}else version(BindGLFW_Static){
-}else version = BindGLFW_Dynamic;
-
-version(BindGLFW_Dynamic):
-
-import bindbc.loader;
 import bindbc.glfw.types;
+
+static if(!staticBinding):
 
 extern(C) @nogc nothrow{
 	alias pglfwInit = int function();
@@ -262,6 +257,8 @@ __gshared{
 	}
 }
 
+import bindbc.loader;
+
 private{
 	SharedLib lib;
 	GLFWSupport loadedVersion;
@@ -283,8 +280,10 @@ bool isGLFWLoaded() @safe{
 	return lib != invalidHandle;
 }
 
-/* This is exposed solely to support the optional loader mixins
-at the bottom of the module. */
+/**
+This is exposed solely to support the optional loader mixins
+at the bottom of the module.
+*/
 void bindGLFWSymbol(void** ptr, const(char)* symbolName){
 	assert(lib != invalidHandle, "GLFW must be loaded before attempting to bind optional functions.");
 	lib.bindSymbol(ptr, symbolName);
@@ -526,7 +525,7 @@ enum bindGLFW_EGL= q{
 	}
 	
 	@nogc nothrow bool loadGLFW_EGL(){
-		import bindbc.loader.sharedlib : errorCount;
+		import bindbc.loader.sharedlib: errorCount;
 		if(!isGLFWLoaded) return false;
 		
 		auto errCount = errorCount();
@@ -543,7 +542,7 @@ version(Windows){
 		__gshared pglfwGetWGLContext glfwGetWGLContext;
 		
 		@nogc nothrow bool loadGLFW_WGL(){
-			import bindbc.loader.sharedlib : errorCount;
+			import bindbc.loader.sharedlib: errorCount;
 			if(!isGLFWLoaded) return false;
 			
 			auto errCount = errorCount();
@@ -566,7 +565,7 @@ version(Windows){
 			}
 			
 			@nogc nothrow bool loadGLFW_Windows(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
@@ -581,7 +580,7 @@ version(Windows){
 			extern(C) @nogc nothrow alias pglfwGetWin32Window = HWND function(GLFWwindow* window);
 			__gshared pglfwGetWin32Window glfwGetWin32Window;
 			@nogc nothrow bool loadGLFW_Windows(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
@@ -596,7 +595,7 @@ version(Windows){
 		__gshared pglfwGetNSGLContext glfwGetNSGLContext;
 		
 		@nogc nothrow bool loadGLFW_NSGL(){
-			import bindbc.loader.sharedlib : errorCount;
+			import bindbc.loader.sharedlib: errorCount;
 			if(!isGLFWLoaded) return false;
 			
 			auto errCount = errorCount();
@@ -618,7 +617,7 @@ version(Windows){
 			}
 			
 			@nogc nothrow bool loadGLFW_Cocoa(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
@@ -633,7 +632,7 @@ version(Windows){
 			__gshared pglfwGetCocoaWindow glfwGetCocoaWindow;
 			
 			@nogc nothrow bool loadGLFW_Cocoa(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
@@ -661,7 +660,7 @@ version(Windows){
 			}
 			
 			@nogc nothrow bool loadGLFW_GLX(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
@@ -676,7 +675,7 @@ version(Windows){
 			__gshared pglfwGetGLXContext glfwGetGLXContext;
 			
 			@nogc nothrow bool loadGLFW_GLX(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
@@ -706,7 +705,7 @@ version(Windows){
 			}
 			
 			@nogc nothrow bool loadGLFW_X11(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
@@ -736,7 +735,7 @@ version(Windows){
 			}
 			
 			@nogc nothrow bool loadGLFW_X11(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
@@ -760,7 +759,7 @@ version(Windows){
 			}
 			
 			@nogc nothrow bool loadGLFW_X11(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
@@ -785,7 +784,7 @@ version(Windows){
 			}
 			
 			@nogc nothrow bool loadGLFW_Wayland(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
@@ -813,7 +812,7 @@ version(Windows){
 			}
 			
 			@nogc nothrow bool loadGLFW_Mir(){
-				import bindbc.loader.sharedlib : errorCount;
+				import bindbc.loader.sharedlib: errorCount;
 				if(!isGLFWLoaded) return false;
 				
 				auto errCount = errorCount();
