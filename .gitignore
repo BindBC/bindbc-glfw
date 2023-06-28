@@ -1,3 +1,7 @@
 lib
 dub.selections.json
 .dub
+dscanner.ini
+*.kate-swp
+.directory
+.DS_Store
