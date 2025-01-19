@@ -125,6 +125,7 @@ extern(C) @nogc nothrow {
 		void glfwSetWindowAttrib(GLFWwindow* window, int attrib, int value);
 		GLFWwindowmaximizefun glfwSetWindowMaximizeCallback(GLFWwindow* window, GLFWwindowmaximizefun callback);
 		GLFWwindowcontentscalefun glfwSetWindowContentScaleCallback(GLFWwindow* window, GLFWwindowcontentscalefun callback);
+		int glfwRawMouseMotionSupported();
 		int glfwGetKeyScancode(int key);
 		const(ubyte)* glfwGetJoystickHats(int jid, int* count);
 		const(char)* glfwGetJoystickGUID(int jid);

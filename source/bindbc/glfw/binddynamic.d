@@ -122,6 +122,7 @@ extern(C) @nogc nothrow{
 		alias pglfwSetWindowAttrib = void function(GLFWwindow* window, int attrib, int value);
 		alias pglfwSetWindowMaximizeCallback = GLFWwindowmaximizefun function(GLFWwindow* window, GLFWwindowmaximizefun callback);
 		alias pglfwSetWindowContentScaleCallback = GLFWwindowcontentscalefun function(GLFWwindow* window, GLFWwindowcontentscalefun callback);
+		alias pglfwRawMouseMotionSupported = int function();
 		alias pglfwGetKeyScancode = int function(int key);
 		alias pglfwGetJoystickHats = const(ubyte)* function(int jid, int* count);
 		alias pglfwGetJoystickGUID = const(char)* function(int jid);
@@ -245,6 +246,7 @@ __gshared{
 		pglfwSetWindowAttrib glfwSetWindowAttrib;
 		pglfwSetWindowMaximizeCallback glfwSetWindowMaximizeCallback;
 		pglfwSetWindowContentScaleCallback glfwSetWindowContentScaleCallback;
+		pglfwRawMouseMotionSupported glfwRawMouseMotionSupported;
 		pglfwGetKeyScancode glfwGetKeyScancode;
 		pglfwGetJoystickHats glfwGetJoystickHats;
 		pglfwGetJoystickGUID glfwGetJoystickGUID;
@@ -445,6 +447,7 @@ GLFWSupport loadGLFW(const(char)* libName){
 		lib.bindSymbol(cast(void**)&glfwSetWindowAttrib, "glfwSetWindowAttrib");
 		lib.bindSymbol(cast(void**)&glfwSetWindowMaximizeCallback, "glfwSetWindowMaximizeCallback");
 		lib.bindSymbol(cast(void**)&glfwSetWindowContentScaleCallback, "glfwSetWindowContentScaleCallback");
+		lib.bindSymbol(cast(void**)&glfwRawMouseMotionSupported, "glfwRawMouseMotionSupported");
 		lib.bindSymbol(cast(void**)&glfwGetKeyScancode, "glfwGetKeyScancode");
 		lib.bindSymbol(cast(void**)&glfwGetJoystickHats, "glfwGetJoystickHats");
 		lib.bindSymbol(cast(void**)&glfwGetJoystickGUID, "glfwGetJoystickGUID");
