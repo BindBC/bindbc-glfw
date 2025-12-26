@@ -136,6 +136,13 @@ extern(C) @nogc nothrow {
 		const(char)* glfwGetGamepadName(int jid);
 		int glfwGetGamepadState(int jid, GLFWgamepadstate* state);
 	}
+
+	static if(glfwSupport >= GLFWSupport.glfw34) {
+		void glfwInitAllocator(const(GLFWallocator)* allocator);
+		int glfwGetPlatform(void);
+		int glfwPlatformSupported(int platform);
+		const(char)* glfwGetWindowTitle(GLFWwindow* window);
+	}
 }
 
 /*
@@ -150,7 +157,18 @@ extern(C) @nogc nothrow {
 */
 
 // Vulkan
-static if(glfwSupport >= GLFWSupport.glfw32) {
+static if(glfwSupport >= GLFWSupport.glfw34) {
+	enum bindGLFW_Vulkan = q{
+		extern(C) @nogc nothrow {
+			const(char)** glfwGetRequiredInstanceExtensions(uint* count);
+			GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance, const(char)* procname);
+			int glfwGetPhysicalDevicePresentationSupport(VkInstance instance, VkPhysicalDevice device, uint queuefamily);
+			VkResult glfwCreateWindowSurface(VkInstance instance, GLFWwindow* window, const(VkAllocationCallbacks)* allocator, VkSurfaceKHR* surface);
+			void glfwInitVulkanLoader(PFN_vkGetInstanceProcAddr loader);
+		}
+	};
+}
+else static if(glfwSupport >= GLFWSupport.glfw32) {
 	enum bindGLFW_Vulkan = q{
 		extern(C) @nogc nothrow {
 			const(char)** glfwGetRequiredInstanceExtensions(uint* count);
@@ -194,7 +212,16 @@ version(OSX) {
 		extern(C) @nogc nothrow id glfwGetNSGLContext(GLFWwindow* window);
 	};
 
-	static if(glfwSupport >= GLFWSupport.glfw31) {
+	static if(glfwSupport >= GLFWSupport.glfw34) {
+		enum bindGLFW_Cocoa = q{
+			extern(C) @nogc nothrow {
+				CGDirectDisplayID glfwGetCocoaMonitor(GLFWmonitor* monitor);
+				id glfwGetCocoaWindow(GLFWwindow* window);
+				id glfwGetCocoaView(GLFWwindow* window);
+			}
+		};
+	}
+	else static if(glfwSupport >= GLFWSupport.glfw31) {
 		enum bindGLFW_Cocoa = q{
 			extern(C) @nogc nothrow {
 				CGDirectDisplayID glfwGetCocoaMonitor(GLFWmonitor* monitor);
