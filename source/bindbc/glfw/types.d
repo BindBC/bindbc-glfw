@@ -20,11 +20,16 @@ enum GLFWSupport{
 	glfw31      = 31,
 	glfw32      = 32,
 	glfw33      = 33,
+	glfw34      = 34,
 }
 
 enum GLFW_VERSION_MAJOR = 3;
 
-version(GLFW_33){
+version(GLFW_34){
+	enum GLFW_VERSION_MINOR = 4;
+	enum GLFW_VERSION_REVISION = 0;
+	enum glfwSupport = GLFWSupport.glfw34;
+}else version(GLFW_33){
 	enum GLFW_VERSION_MINOR = 3;
 	enum GLFW_VERSION_REVISION = 0;
 	enum glfwSupport = GLFWSupport.glfw33;
@@ -43,8 +48,8 @@ version(GLFW_33){
 }
 
 enum{
-	GLFW_FALSE,
-	GLFW_TRUE,
+	GLFW_FALSE = 0,
+	GLFW_TRUE = 1,
 }
 
 enum{
@@ -297,8 +302,13 @@ enum{
 	GLFW_VERSION_UNAVAILABLE = 0x00010007,
 	GLFW_PLATFORM_ERROR = 0x00010008,
 	GLFW_FORMAT_UNAVAILABLE = 0x00010009,
-	GLFW_NO_WINDOW_CONTEXT = 0x0001000A,    // Added in GLFW 3.2
+	GLFW_NO_WINDOW_CONTEXT = 0x0001000A,        // Added in GLFW 3.2
+	GLFW_CURSOR_UNAVAILABLE = 0x0001000B,       // Added in GLFW 3.4
+	GLFW_FEATURE_UNAVAILABLE = 0x0001000C,      // ditto
+	GLFW_FEATURE_UNIMPLEMENTED = 0x0001000D,    // ditto
+	GLFW_PLATFORM_UNAVAILABLE = 0x0001000E,     // ditto
 }
+
 
 enum{
 	GLFW_FOCUSED = 0x00020001,
@@ -306,13 +316,16 @@ enum{
 	GLFW_RESIZABLE = 0x00020003,
 	GLFW_VISIBLE = 0x00020004,
 	GLFW_DECORATED = 0x00020005,
-	GLFW_AUTO_ICONIFY = 0x00020006,     // Added in GLFW 3.1
-	GLFW_FLOATING = 0x00020007,         // ditto
-	GLFW_MAXIMIZED = 0x00020008,        // Added in GLFW 3.2
-	GLFW_CENTER_CURSOR = 0x00020009,    // Added in GLFW 3.3
-	GLFW_TRANSPARENT_FRAMEBUFFER = 0x0002000A, // ditto
-	GLFW_HOVERED = 0x0002000B,          // ditto
-	GLFW_FOCUS_ON_SHOW = 0x0002000C,    // ditto
+	GLFW_AUTO_ICONIFY = 0x00020006,             // Added in GLFW 3.1
+	GLFW_FLOATING = 0x00020007,                 // ditto
+	GLFW_MAXIMIZED = 0x00020008,                // Added in GLFW 3.2
+	GLFW_CENTER_CURSOR = 0x00020009,            // Added in GLFW 3.3
+	GLFW_TRANSPARENT_FRAMEBUFFER = 0x0002000A,  // ditto
+	GLFW_HOVERED = 0x0002000B,                  // ditto
+	GLFW_FOCUS_ON_SHOW = 0x0002000C,            // ditto
+	GLFW_MOUSE_PASSTHROUGH = 0x0002000D,        // Added in GLFW 3.4
+	GLFW_POSITION_X = 0x0002000E,               // ditto
+	GLFW_POSITION_Y = 0x0002000F,               // ditto
 }
 
 enum{
@@ -342,16 +355,21 @@ enum{
 	GLFW_CONTEXT_ROBUSTNESS = 0x00022005,
 	GLFW_OPENGL_FORWARD_COMPAT = 0x00022006,
 	GLFW_OPENGL_DEBUG_CONTEXT = 0x00022007,
-	GLFW_OPENGL_PROFILE = 0x00022008,
+	GLFW_CONTEXT_DEBUG = 0x00022007,            // Added in GLFW 3.4
+	GLFW_OPENGL_PROFILE = GLFW_CONTEXT_DEBUG,   // legacy
 	GLFW_CONTEXT_RELEASE_BEHAVIOR = 0x00022009, // Added in GLFW 3.1
 	GLFW_CONTEXT_NO_ERROR = 0x0002200A,         // Added in GLFW 3.2
 	GLFW_CONTEXT_CREATION_API = 0x0002200B,     // ditto
 	GLFW_SCALE_TO_MONITOR = 0x0002200C,         // Added in GLFW 3.3
-	GLFW_COCOA_RETINA_FRAMEBUFFER = 0x00023001, // ditto
+	GLFW_SCALE_FRAMEBUFFER = 0x0002200D,        // Added in GLFW 3.4
+	GLFW_COCOA_RETINA_FRAMEBUFFER = 0x00023001, // Added in GLFW 3.3
 	GLFW_COCOA_FRAME_NAME = 0x00023002,         // ditto
 	GLFW_COCOA_GRAPHICS_SWITCHING = 0x00023003, // ditto
 	GLFW_X11_CLASS_NAME = 0x00024001,           // ditto
 	GLFW_X11_INSTANCE_NAME = 0x00024002,        // ditto
+	GLFW_WIN32_KEYBOARD_MENU = 0x00025001,      // Added in GLFW 3.4
+	GLFW_WIN32_SHOWDEFAULT = 0x00025002,        // ditto
+	GLFW_WAYLAND_APP_ID = 0x00026001,           // ditto
 }
 
 enum{
@@ -376,6 +394,7 @@ enum{
 	GLFW_CURSOR_NORMAL = 0x00034001,
 	GLFW_CURSOR_HIDDEN = 0x00034002,
 	GLFW_CURSOR_DISABLED = 0x00034003,
+	GLFW_CURSOR_CAPTURED = 0x00034004,      // Added in GLFW 3.4
 	
 	GLFW_ANY_RELEASE_BEHAVIOR = 0,              // Added in GLFW 3.1
 	GLFW_RELEASE_BEHAVIOR_FLUSH = 0x00035001,   // ditto
@@ -384,20 +403,54 @@ enum{
 	GLFW_NATIVE_CONTEXT_API = 0x00036001,       // Added in GLFW 3.1
 	GLFW_EGL_CONTEXT_API = 0x00036002,          // ditto
 	GLFW_OSMESA_CONTEXT_API = 0x00036003,       // Added in GLFW 3.3
-	
+
+	GLFW_ANGLE_PLATFORM_TYPE_NONE = 0x00037001,     // Added in GLFW 3.4
+	GLFW_ANGLE_PLATFORM_TYPE_OPENGL = 0x00037002,   // ditto
+	GLFW_ANGLE_PLATFORM_TYPE_OPENGLES = 0x00037003, // ditto
+	GLFW_ANGLE_PLATFORM_TYPE_D3D9 = 0x00037004,     // ditto
+	GLFW_ANGLE_PLATFORM_TYPE_D3D11 = 0x00037005,    // ditto
+	GLFW_ANGLE_PLATFORM_TYPE_VULKAN = 0x00037007,   // ditto
+	GLFW_ANGLE_PLATFORM_TYPE_METAL = 0x00037008,    // ditto
+
+	GLFW_WAYLAND_PREFER_LIBDECOR = 0x00038001,  // Added in GLFW 3.4
+	GLFW_WAYLAND_DISABLE_LIBDECOR = 0x00038002, // ditto
+
+	GLFW_ANY_POSITION = 0x80000000,             // Added in GLFW 3.4
+
 	GLFW_ARROW_CURSOR = 0x00036001,             // Added in GLFW 3.1
 	GLFW_IBEAM_CURSOR = 0x00036002,             // ditto
 	GLFW_CROSSHAIR_CURSOR = 0x00036003,         // ditto
-	GLFW_HAND_CURSOR = 0x00036004,              // ditto
-	GLFW_HRESIZE_CURSOR = 0x00036005,           // ditto
-	GLFW_VRESIZE_CURSOR = 0x00036006,           // ditto
+	GLFW_POINTING_HAND_CURSOR = 0x00036004,     // Added in GLFW 3.4
+	GLFW_RESIZE_EW_CURSOR = 0x00036005,         // ditto
+	GLFW_RESIZE_NS_CURSOR = 0x00036006,         // ditto
+	GLFW_RESIZE_NWSE_CURSOR = 0x00036007,       // ditto
+	GLFW_RESIZE_NESW_CURSOR = 0x00036008,       // ditto
+	GLFW_RESIZE_ALL_CURSOR = 0x00036009,        // ditto
+	GLFW_NOT_ALLOWED_CURSOR = 0x0003600A,       // ditto
+	GLFW_HRESIZE_CURSOR = GLFW_RESIZE_EW_CURSOR,    // Added in GLFW 3.1
+	GLFW_VRESIZE_CURSOR = GLFW_RESIZE_NS_CURSOR,    // ditto
+	GLFW_HAND_CURSOR = GLFW_POINTING_HAND_CURSOR,   // ditto
 	
 	GLFW_CONNECTED = 0x00040001,
 	GLFW_DISCONNECTED = 0x00040002,
 	
 	GLFW_JOYSTICK_HAT_BUTTONS = 0x00050001,     // Added in GLFW 3.3
-	GLFW_COCOA_CHDIR_RESOURCES = 0x00051001,    // ditto
+	GLFW_ANGLE_PLATFORM_TYPE = 0x00050002,      // Added in GLFW 3.4
+	GLFW_PLATFORM = 0x00050003,                 // ditto
+	GLFW_COCOA_CHDIR_RESOURCES = 0x00051001,    // Added in GLFW 3.3
 	GLFW_COCOA_MENUBAR = 0x00051002,            // ditto
+	GLFW_X11_XCB_VULKAN_SURFACE = 0x00052001,   // Added in GLFW 3.4
+	GLFW_WAYLAND_LIBDECOR = 0x00053001,         // ditto
+}
+
+// Added in GLFW 3.4
+enum {
+	GLFW_ANY_PLATFORM = 0x00060000,
+	GLFW_PLATFORM_WIN32 = 0x00060001,
+	GLFW_PLATFORM_COCOA = 0x00060002,
+	GLFW_PLATFORM_WAYLAND = 0x00060003,
+	GLFW_PLATFORM_X11 = 0x00060004,
+	GLFW_PLATFORM_NULL = 0x00060005,
 }
 
 enum GLFW_DONT_CARE = -1;       // Added in GLFW 3.1
@@ -413,6 +466,11 @@ static if(glfwSupport >= GLFWSupport.glfw31) struct GLFWcursor;
 
 version(BindGLFW_NoGC_Callbacks){
 	extern(C) @nogc nothrow{
+		static if(glfwSupport >= GLFWSupport.glfw34){
+			alias GLFWallocatefun = void* function(size_t,void*);
+			alias GLFWreallocatefun = void* function(void*,size_t,void*);
+			alias GLFWdeallocatefun = void function(void*, void*);
+		}
 		alias GLFWerrorfun = void function(int,const(char)*);
 		alias GLFWwindowposfun = void function(GLFWwindow*,int,int);
 		alias GLFWwindowsizefun = void function(GLFWwindow*,int,int);
@@ -439,6 +497,11 @@ version(BindGLFW_NoGC_Callbacks){
 }
 else{
 	extern(C) nothrow{
+		static if(glfwSupport >= GLFWSupport.glfw34){
+			alias GLFWallocatefun = void* function(size_t,void*);
+			alias GLFWreallocatefun = void* function(void*,size_t,void*);
+			alias GLFWdeallocatefun = void function(void*, void*);
+		}
 		alias GLFWerrorfun = void function(int,const(char)*);
 		alias GLFWwindowposfun = void function(GLFWwindow*,int,int);
 		alias GLFWwindowsizefun = void function(GLFWwindow*,int,int);
@@ -492,5 +555,14 @@ static if(glfwSupport >= GLFWSupport.glfw33){
 	struct GLFWgamepadstate{
 		ubyte[15] buttons;
 		float[6] axes;
+	}
+}
+
+static if(glfwSupport >= GLFWSupport.glfw34) {
+	struct GLFWallocator {
+		GLFWallocatefun allocate;
+		GLFWreallocatefun reallocate;
+		GLFWdeallocatefun deallocate;
+		void* user;
 	}
 }

@@ -133,6 +133,12 @@ extern(C) @nogc nothrow{
 		alias pglfwGetGamepadName = const(char)* function(int jid);
 		alias pglfwGetGamepadState = int function(int jid, GLFWgamepadstate* state);
 	}
+	static if(glfwSupport > GLFWSupport.glfw34) {
+		alias pglfwInitAllocator = void function(const(GLFWallocator)* allocator);
+		alias pglfwGetPlatform = int function(void);
+		alias pglfwPlatformSupported = int function(int);
+		alias pglfwGetWindowTitle = const(char)* function(GLFWwindow* window);
+	}
 }
 
 __gshared{
@@ -256,6 +262,12 @@ __gshared{
 		pglfwUpdateGamepadMappings glfwUpdateGamepadMappings;
 		pglfwGetGamepadName glfwGetGamepadName;
 		pglfwGetGamepadState glfwGetGamepadState;
+	}
+	static if(glfwSupport >= GLFWSupport.glfw34){
+		pglfwInitAllocator glfwInitAllocator;
+		pglfwGetPlatform glfwGetPlatform;
+		pglfwPlatformSupported glfwPlatformSupported;
+		pglfwGetWindowTitle glfwGetWindowTitle;
 	}
 }
 
@@ -432,7 +444,7 @@ GLFWSupport loadGLFW(const(char)* libName){
 		else loadedVersion = GLFWSupport.glfw32;
 	}
 	
-	static if(glfwSupport == GLFWSupport.glfw33){
+	static if(glfwSupport >= GLFWSupport.glfw33){
 		lib.bindSymbol(cast(void**)&glfwInitHint, "glfwInitHint");
 		lib.bindSymbol(cast(void**)&glfwGetError, "glfwGetError");
 		lib.bindSymbol(cast(void**)&glfwGetMonitorWorkarea, "glfwGetMonitorWorkarea");
@@ -462,6 +474,16 @@ GLFWSupport loadGLFW(const(char)* libName){
 		else loadedVersion = GLFWSupport.glfw33;
 	}
 	
+	static if(glfwSupport >= GLFWSupport.glfw34){
+		lib.bindSymbol(cast(void**)&glfwInitAllocator, "glfwInitAllocator");
+		lib.bindSymbol(cast(void**)&glfwGetPlatform, "glfwGetPlatform");
+		lib.bindSymbol(cast(void**)&glfwPlatformSupported, "glfwPlatformSupported");
+		lib.bindSymbol(cast(void**)&glfwGetWindowTitle, "glfwGetWindowTitle");
+		
+		if(errorCount() != errCount) return GLFWSupport.badLibrary;
+		else loadedVersion = GLFWSupport.glfw34;
+	}
+
 	return loadedVersion;
 }
 
@@ -484,7 +506,39 @@ GLFWSupport loadGLFW(const(char)* libName){
 	}
 ```
 */
-static if(glfwSupport >= GLFWSupport.glfw32){
+static if(glfwSupport >= GLFWSupport.glfw34){
+	enum bindGLFW_Vulkan = q{
+		extern(C) @nogc nothrow{
+			alias pglfwGetRequiredInstanceExtensions = const(char)** function(uint* count);
+			alias pglfwGetInstanceProcAddress = GLFWvkproc function(VkInstance instance, const(char)* procname);
+			alias pglfwGetPhysicalDevicePresentationSupport = int function(VkInstance instance, VkPhysicalDevice device, uint queuefamily);
+			alias pglfwCreateWindowSurface = VkResult function(VkInstance instance, GLFWwindow* window, const(VkAllocationCallbacks)* allocator, VkSurfaceKHR* surface);
+			alias pglfwInitVulkanLoader = void function(PFN_vkGetInstanceProcAddr loader);
+		}
+		
+		__gshared{
+			pglfwGetRequiredInstanceExtensions glfwGetRequiredInstanceExtensions;
+			pglfwGetInstanceProcAddress glfwGetInstanceProcAddress;
+			pglfwGetPhysicalDevicePresentationSupport glfwGetPhysicalDevicePresentationSupport;
+			pglfwCreateWindowSurface glfwCreateWindowSurface;
+			pglfwInitVulkanLoader glfwInitVulkanLoader;
+		}
+		
+		@nogc nothrow bool loadGLFW_Vulkan(){
+			import bindbc.loader.sharedlib: errorCount;
+			if(!isGLFWLoaded) return false;
+			
+			auto errCount = errorCount();
+			bindGLFWSymbol(cast(void**)&glfwGetRequiredInstanceExtensions, "glfwGetRequiredInstanceExtensions");
+			bindGLFWSymbol(cast(void**)&glfwGetInstanceProcAddress, "glfwGetInstanceProcAddress");
+			bindGLFWSymbol(cast(void**)&glfwGetPhysicalDevicePresentationSupport, "glfwGetPhysicalDevicePresentationSupport");
+			bindGLFWSymbol(cast(void**)&glfwCreateWindowSurface, "glfwCreateWindowSurface");
+			bindGLFWSymbol(cast(void**)&glfwInitVulkanLoader, "glfwInitVulkanLoader");
+			return errorCount() == errCount;
+		}
+	};
+}
+else static if(glfwSupport >= GLFWSupport.glfw32){
 	enum bindGLFW_Vulkan = q{
 		extern(C) @nogc nothrow{
 			alias pglfwGetRequiredInstanceExtensions = const(char)** function(uint* count);
@@ -607,7 +661,33 @@ version(Windows){
 		}
 	};
 	
-	static if(glfwSupport >= GLFWSupport.glfw31){
+	static if(glfwSupport >= GLFWSupport.glfw34){
+		enum glfwCocoaBind = q{
+			extern(C) @nogc nothrow{
+				alias pglfwGetCocoaMonitor = CGDirectDisplayID function(GLFWmonitor* monitor);
+				alias pglfwGetCocoaWindow = id function(GLFWwindow* window);
+				alias pglfwGetCocoaView = id function(GLFWwindow* window);
+			}
+			
+			__gshared{
+				pglfwGetCocoaMonitor glfwGetCocoaMonitor;
+				pglfwGetCocoaWindow glfwGetCocoaWindow;
+				pglfwGetCocoaView glfwGetCocoaView;
+			}
+			
+			@nogc nothrow bool loadGLFW_Cocoa(){
+				import bindbc.loader.sharedlib: errorCount;
+				if(!isGLFWLoaded) return false;
+				
+				auto errCount = errorCount();
+				bindGLFWSymbol(cast(void**)&glfwGetCocoaMonitor, "glfwGetCocoaMonitor");
+				bindGLFWSymbol(cast(void**)&glfwGetCocoaWindow,"glfwGetCocoaWindow");
+				bindGLFWSymbol(cast(void**)&glfwGetCocoaView,"glfwGetCocoaView");
+				return errorCount() == errCount;
+			}
+		};
+	}
+	else static if(glfwSupport >= GLFWSupport.glfw31){
 		enum glfwCocoaBind = q{
 			extern(C) @nogc nothrow{
 				alias pglfwGetCocoaMonitor = CGDirectDisplayID function(GLFWmonitor* monitor);
