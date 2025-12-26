@@ -206,8 +206,7 @@ version(Windows) {
 			extern(C) @nogc nothrow HWND glfwGetWin32Window(GLFWwindow* window);
 	};
 }
-
-version(OSX) {
+else version(OSX) {
 	enum bindGLFW_NSGL = q{
 		extern(C) @nogc nothrow id glfwGetNSGLContext(GLFWwindow* window);
 	};
