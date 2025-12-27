@@ -139,7 +139,7 @@ extern(C) @nogc nothrow {
 
 	static if(glfwSupport >= GLFWSupport.glfw34) {
 		void glfwInitAllocator(const(GLFWallocator)* allocator);
-		int glfwGetPlatform(void);
+		int glfwGetPlatform();
 		int glfwPlatformSupported(int platform);
 		const(char)* glfwGetWindowTitle(GLFWwindow* window);
 	}
