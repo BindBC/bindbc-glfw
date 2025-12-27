@@ -133,9 +133,9 @@ extern(C) @nogc nothrow{
 		alias pglfwGetGamepadName = const(char)* function(int jid);
 		alias pglfwGetGamepadState = int function(int jid, GLFWgamepadstate* state);
 	}
-	static if(glfwSupport > GLFWSupport.glfw34) {
+	static if(glfwSupport >= GLFWSupport.glfw34) {
 		alias pglfwInitAllocator = void function(const(GLFWallocator)* allocator);
-		alias pglfwGetPlatform = int function(void);
+		alias pglfwGetPlatform = int function();
 		alias pglfwPlatformSupported = int function(int);
 		alias pglfwGetWindowTitle = const(char)* function(GLFWwindow* window);
 	}
