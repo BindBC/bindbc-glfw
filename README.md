@@ -13,13 +13,13 @@ To use GLFW, add bindbc-glfw as a dependency to your project's package config fi
 __dub.json__
 ```
 dependencies {
-    "bindbc-glfw": "~>1.0.0",
+    "bindbc-glfw": "~>1.1",
 }
 ```
 
 __dub.sdl__
 ```
-dependency "bindbc-glfw" version="~>1.0.0"
+dependency "bindbc-glfw" version="~>1.1"
 ```
 
 ### The dynamic binding
@@ -113,14 +113,14 @@ By default, the bindbc-glfw binding is configured to load GLFW 3.0. This ensures
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-glfw": "~>1.0.0"
+    "bindbc-glfw": "~>1.1"
 },
 "versions": ["GLFW_31"]
 ```
 
 __dub.sdl__
 ```
-dependency "bindbc-glfw" version="~>1.0.0"
+dependency "bindbc-glfw" version="~>1.1"
 versions "GLFW_31"
 ```
 
@@ -144,6 +144,7 @@ Following are the supported versions of GLFW, the corresponding version IDs to p
 |GLFW 3.1            | GLFW_31          | `GLFWSupport.glfw31` |
 |GLFW 3.2            | GLFW_32          | `GLFWSupport.glfw32` |
 |GLFW 3.3            | GLFW_33          | `GLFWSupport.glfw33` |
+|GLFW 3.4            | GLFW_34          | `GLFWSupport.glfw34` |
 
 ## The static binding
 First things first: the static _binding_ does not require static _linking_. It allows for both static and dynamic linking. The static binding has a link-time dependency on either the shared or the static GLFW library. On Windows, you can link with the static library or with the import library for dynamic linking, i.e., to use the shared library (`glfw3.dll`). On other systems, you can link with either the static library or directly with the shared library. This requires the GLFW development package be installed on your system at compile time, either by compiling the GLFW source yourself, downloading the GLFW precompiled binaries for Windows, or installing via a system package manager. [See the GLFW download page](https://www.glfw.org/download.html) for details.
@@ -164,7 +165,7 @@ When using DUB, its `versions` directive is an option. For example, when using t
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-glfw": "~>1.0.0"
+    "bindbc-glfw": "~>1.1"
 },
 "versions": ["BindGLFW_Static"],
 "libs": ["glfw3"]
@@ -172,7 +173,7 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-glfw" version="~>1.0.0"
+dependency "bindbc-glfw" version="~>1.1"
 versions "BindGLFW_Static"
 libs "glfw3"
 ```
@@ -183,7 +184,7 @@ Instead of using DUB's `versions` directive, a `subConfiguration` can be used. E
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-glfw": "~>1.0.0"
+    "bindbc-glfw": "~>1.1"
 },
 "subConfigurations": {
     "bindbc-glfw": "static"
@@ -193,7 +194,7 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-glfw" version="~>1.0.0"
+dependency "bindbc-glfw" version="~>1.1"
 subConfiguration "bindbc-glfw" "static"
 libs "glfw3"
 ```
@@ -206,7 +207,7 @@ This has the benefit that it completely excludes from the build any source modul
 __dub.json__
 ```
 "dependencies": {
-    "bindbc-glfw": "~>1.0.0"
+    "bindbc-glfw": "~>1.1"
 },
 "subConfigurations": {
     "bindbc-glfw": "staticBC"
@@ -216,7 +217,7 @@ __dub.json__
 
 __dub.sdl__
 ```
-dependency "bindbc-glfw" version="~>1.0.0"
+dependency "bindbc-glfw" version="~>1.1"
 subConfiguration "bindbc-glfw" "staticBC"
 libs "glfw3"
 ```
